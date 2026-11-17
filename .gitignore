@@ -1,0 +1,17 @@
+# Dependencies installed by the scripts in part4-output/tools
+node_modules/
+package-lock.json
+
+# Operating system files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Office lock files
+~$*
+
+# The group's shared files stay out of this public repository
+# (they contain classmates' full names)
+Relore_Final.pptx
+Relore_BMC_Growth_Delivery_Rate_Final.pdf
+Relore_Market_Feasibility_Data.docx

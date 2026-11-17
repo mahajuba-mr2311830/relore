@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relore: pitch teleprompter</title>
+<link rel="icon" href="../prototype/assets/favicon.ico" sizes="48x48">
+<link rel="icon" href="../prototype/assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#221E20">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Brand colours (Relore Logo Guidelines v1.0). White logo on Thread Ink is an approved pair. */
+:root {
+  --maroon: #8A1538; --ink: #221E20; --sand: #F3ECE2; --white: #FFFFFF;
+  --maroon-light: #DCB9C3; --ink-raised: #2F2A2C; --ink-line: #4A4446; --dim: #A29C9E;
+  --size: 46px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font-family: "Jost", Arial, sans-serif; background: var(--ink); color: var(--white); display: flex; flex-direction: column; overflow: hidden; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--maroon); color: var(--white); }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2.5px solid var(--white); outline-offset: 2px; border-radius: 6px; }
+
+header { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 6px 28px 6px 18px; border-bottom: 1px solid var(--ink-line); }
+/* Wordmark with rimmed button: minimum 120 px wide. The file's own margin plus this padding keeps the clear zone. */
+header img { width: 136px; height: auto; display: block; }
+.clock { font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; text-align: right; }
+.clock small { display: block; font-size: 14px; font-weight: 400; color: var(--dim); }
+
+.stage { position: relative; flex: 1; min-height: 0; }
+#scroller { height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--ink-line) transparent; padding: 0 24px; }
+#script { max-width: 23em; margin: 0 auto; padding: 38vh 0 62vh; font-size: var(--size); line-height: 1.32; }
+.mirror #script { transform: scaleX(-1); }
+section { padding-bottom: .9em; color: var(--dim); transition: color .25s; }
+section.now { color: var(--white); }
+section h2 { margin: 0 0 .5em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 18px; font-weight: 500; letter-spacing: .02em; color: var(--dim); }
+section h2 b { background: var(--maroon); color: var(--white); padding: 5px 13px; border-radius: 999px; font-weight: 600; font-size: 17px; }
+section.now h2 { color: var(--maroon-light); }
+section p { margin: 0; font-weight: 500; text-wrap: pretty; }
+.cue { position: absolute; left: 0; right: 0; top: 38vh; height: 0; pointer-events: none; }
+.cue::before { content: ""; position: absolute; left: 10px; top: 14px; border: 10px solid transparent; border-left: 14px solid var(--maroon); }
+.cue::after { content: ""; position: absolute; right: 10px; top: 14px; border: 10px solid transparent; border-right: 14px solid var(--maroon); }
+
+footer { flex: none; display: flex; align-items: center; justify-content: center; gap: 10px 22px; flex-wrap: wrap; padding: 12px 20px; background: var(--ink-raised); border-top: 1px solid var(--ink-line); }
+.btn { min-height: 46px; padding: 8px 18px; border-radius: 12px; border: 1.5px solid var(--ink-line); background: transparent; font-weight: 600; font-size: 16px; cursor: pointer; transition: background .15s; }
+.btn:hover { background: rgba(255, 255, 255, .08); }
+.btn.primary { background: var(--maroon); border-color: var(--maroon); min-width: 118px; }
+.btn.primary:hover { background: #A21A43; }
+.btn[aria-pressed="true"] { background: var(--white); color: var(--ink); border-color: var(--white); }
+.group { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--sand); }
+.group output { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 3.2em; text-align: center; color: var(--white); }
+input[type="range"] { accent-color: var(--maroon); width: 150px; }
+.keys { width: 100%; text-align: center; font-size: 13.5px; color: var(--dim); }
+@media (max-width: 700px) { :root { --size: 30px; } .keys { display: none; } header img { width: 124px; } }
+@media (prefers-reduced-motion: reduce) { section { transition: none; } }
+</style>
+</head>
+<body>
+<header>
+  <img src="../prototype/assets/relore-horizontal-white.svg" alt="Relore">
+  <div class="clock" aria-live="off"><span id="time">0:00</span> / <span id="total">2:00</span><small id="words"></small></div>
+</header>
+
+<div class="stage">
+  <div id="scroller" tabindex="0" aria-label="Pitch script"><div id="script"></div></div>
+  <div class="cue" aria-hidden="true"></div>
+</div>
+
+<footer>
+  <button class="btn primary" id="play" type="button">Start</button>
+  <button class="btn" id="restart" type="button">Restart</button>
+  <div class="group"><label for="dur">Length</label><input id="dur" type="range" min="90" max="170" step="5" value="120"><output id="durOut">2:00</output></div>
+  <div class="group"><span id="sizeLabel">Text size</span>
+    <button class="btn" id="smaller" type="button" aria-label="Smaller text">A−</button>
+    <button class="btn" id="bigger" type="button" aria-label="Larger text">A+</button></div>
+  <button class="btn" id="mirror" type="button" aria-pressed="false">Mirror</button>
+  <p class="keys">Space: start or pause · R: restart · Up and down arrows: nudge · M: mirror (for a teleprompter glass)</p>
+</footer>
+
+<script>
+/* The script. Keep this in step with video-script.md (the master copy). */
+const SCRIPT = [
+  { speaker: 'Speaker 1', section: 'Opening hook', text: 'How many clothes in your wardrobe have you not worn this year? Across Qatar, good clothing sits unused, while new clothes keep getting more expensive.' },
+  { speaker: 'Speaker 1', section: 'The problem', text: 'Today, buying second-hand means scrolling Facebook Marketplace: unclear condition, uncertain sizing, strangers to meet and no delivery. In our survey, three in four people named unclear condition as their biggest frustration.' },
+  { speaker: 'Speaker 2', section: 'The solution', text: 'Meet Relore: a managed marketplace for pre-owned clothing in Qatar. Private sellers list from home, our team reviews every listing by hand, and Relore’s own drivers handle collection and delivery.' },
+  { speaker: 'Speaker 3', section: 'How it works (prototype on screen)', text: 'Here is how it works. A seller uploads four photos: front, back, label and any defects. We review the listing before it goes live. A buyer browses, chats with the seller and orders. A Relore driver collects the item and delivers it. If it does not match the listing, the buyer can decline it at the door.' },
+  { speaker: 'Speaker 4', section: 'Business model', text: 'We earn in two ways. Relore keeps a twenty per cent commission on every sale, and the buyer pays a delivery fee of fifteen riyals plus eighty dirhams per kilometre. Sellers hold their own stock, so we carry no inventory.' },
+  { speaker: 'Speaker 2', section: 'The market and why now', text: 'The Gulf’s second-hand clothing market is estimated at 1.3 billion dollars and forecast to triple by 2035. Qatar has about two million Gen Z and Millennial residents, and almost all our survey respondents use Instagram or TikTok daily.' },
+  { speaker: 'Speaker 5', section: 'Validation', text: 'Our survey backs this: reviews and clear photos are what buyers trust most, and every Relore listing provides both. Our clickable prototype is ready, and a campus pilot comes next.' },
+  { speaker: 'Speaker 5', section: 'The ask and close', text: 'We are asking investors to fund our first driver, vehicle and launch. With one driver, we break even at about nine orders a day. Relore: pre-owned clothing, reviewed and delivered.' }
+];
+
+const $ = id => document.getElementById(id);
+const scroller = $('scroller'), script = $('script');
+const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const mmss = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+const countWords = t => t.trim().split(/\s+/).length;
+
+script.innerHTML = SCRIPT.map(l => `<section><h2><b>${esc(l.speaker)}</b>${esc(l.section)}</h2><p>${esc(l.text)}</p></section>`).join('');
+const totalWords = SCRIPT.reduce((n, l) => n + countWords(l.text), 0);
+
+let duration = 120, playing = false, last = 0, pos = 0, size = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+const distance = () => Math.max(1, scroller.scrollHeight - scroller.clientHeight);
+
+function paint() {
+  const done = Math.min(1, scroller.scrollTop / distance());
+  $('time').textContent = mmss(done * duration);
+  $('total').textContent = mmss(duration);
+  $('durOut').textContent = mmss(duration);
+  $('words').textContent = `${totalWords} words · ${Math.round(totalWords / (duration / 60))} a minute`;
+  const cue = scroller.getBoundingClientRect().top + innerHeight * 0.38 + 30;
+  let current = null;
+  for (const s of script.children) if (s.getBoundingClientRect().top <= cue) current = s;
+  for (const s of script.children) s.classList.toggle('now', s === (current || script.children[0]));
+}
+function frame(t) {
+  if (!playing) return;
+  const dt = Math.min(0.1, (t - last) / 1000); last = t;
+  pos += distance() / duration * dt;
+  scroller.scrollTop = pos;
+  if (pos >= distance()) { setPlaying(false); $('play').textContent = 'Start again'; }
+  requestAnimationFrame(frame);
+}
+function setPlaying(on) {
+  playing = on;
+  $('play').textContent = on ? 'Pause' : 'Start';
+  if (on) {
+    if (scroller.scrollTop >= distance() - 1) scroller.scrollTop = 0;
+    pos = scroller.scrollTop; last = performance.now(); requestAnimationFrame(frame);
+  }
+}
+function restart() { setPlaying(false); scroller.scrollTop = 0; pos = 0; paint(); }
+function resize(delta) {
+  const keep = scroller.scrollTop / distance();
+  size = Math.max(22, Math.min(84, size + delta));
+  document.documentElement.style.setProperty('--size', size + 'px');
+  scroller.scrollTop = pos = keep * distance(); paint();
+}
+function toggleMirror() { const on = document.body.classList.toggle('mirror'); $('mirror').setAttribute('aria-pressed', String(on)); }
+
+$('play').addEventListener('click', () => setPlaying(!playing));
+$('restart').addEventListener('click', restart);
+$('dur').addEventListener('input', e => { duration = Number(e.target.value); paint(); });
+$('smaller').addEventListener('click', () => resize(-4));
+$('bigger').addEventListener('click', () => resize(4));
+$('mirror').addEventListener('click', toggleMirror);
+scroller.addEventListener('scroll', () => { if (!playing) pos = scroller.scrollTop; paint(); }, { passive: true });
+window.addEventListener('resize', paint);
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+  if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'm' || e.key === 'M') toggleMirror();
+  else if (e.key === 'ArrowDown') { e.preventDefault(); scroller.scrollTop = pos = scroller.scrollTop + 60; }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); scroller.scrollTop = pos = scroller.scrollTop - 60; }
+});
+window.Teleprompter = { SCRIPT, totalWords };
+paint();
+</script>
+</body>
+</html>

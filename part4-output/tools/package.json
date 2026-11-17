@@ -1,0 +1,13 @@
+{
+  "name": "relore-part4-tools",
+  "private": true,
+  "description": "Scripts that regenerate the Part 4 screenshots, run the prototype checks and rebuild the mind-map.",
+  "scripts": {
+    "screenshots": "node screenshots.js",
+    "check": "node check-prototype.js",
+    "mindmap": "node build-mindmap.js"
+  },
+  "dependencies": {
+    "playwright-core": "^1.49.1"
+  }
+}

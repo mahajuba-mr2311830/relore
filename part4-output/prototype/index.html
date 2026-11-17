@@ -1,0 +1,1754 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Relore: clickable prototype</title>
+<meta name="description" content="Clickable prototype of Relore, a managed marketplace for pre-owned clothing in Qatar.">
+
+<!-- Favicons: copied from Relore-Logo-Kit/web-icons (see head-snippet.html). Paths are relative so the file works when opened with a double click. -->
+<link rel="icon" href="assets/favicon.ico" sizes="48x48">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#8A1538">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ------------------------------------------------------------------
+   BRAND TOKENS (Relore Logo Guidelines v1.0)
+   Change colours here only.
+------------------------------------------------------------------- */
+:root {
+  --maroon: #8A1538;        /* Relore Maroon: brand accents, buttons */
+  --ink: #221E20;           /* Thread Ink: text */
+  --sand: #F3ECE2;          /* Linen Sand: backgrounds */
+  --white: #FFFFFF;
+
+  /* Tints and shades of the three brand colours, for UI states */
+  --maroon-dark: #6E102C;
+  --maroon-60: #B97388;
+  --maroon-30: #DCB9C3;
+  --maroon-wash: #EBD8D6;
+  --ink-soft: #5C5658;      /* secondary text, 6.1:1 on Linen Sand */
+  --ink-20: #D3D0D1;
+  --sand-deep: #E2D4C0;
+  --sand-line: #DACDB9;
+  --sand-shade: #B9A78E;
+
+  /* Muted status colours (not brand colours) */
+  --ok: #3E6B4F;
+  --ok-wash: #E1EAE1;
+  --wait: #8A5F14;
+  --wait-wash: #F4E8CF;
+  --err: #A8401F;
+  --err-wash: #F6E1D8;
+
+  --font: "Jost", Arial, sans-serif;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --tap: 48px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--sand);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--maroon); color: var(--white); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, p, dl, dd, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img, svg { display: block; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2.5px solid var(--maroon); outline-offset: 2px; border-radius: 6px; }
+.on-dark :focus-visible, .on-dark:focus-visible { outline-color: var(--white); }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ------------------------------------------------------------------
+   STAGE (desktop): side panel + phone frame + fee notes
+------------------------------------------------------------------- */
+.stage {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+  padding: 16px 32px;
+}
+.side { max-width: 300px; justify-self: end; width: 100%; }
+.side-right { justify-self: start; }
+.side .brand-logo { width: 196px; height: auto; margin: 0 0 18px -6px; }
+.side h1 { font-size: 22px; font-weight: 600; line-height: 1.2; }
+.side .lede { color: var(--ink-soft); margin-top: 6px; font-size: 15px; }
+.side h2 { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--maroon); margin: 28px 0 8px; }
+.demo-list { display: grid; gap: 2px; }
+.demo-list button {
+  display: flex; align-items: baseline; gap: 10px; width: 100%;
+  background: none; border: 0; border-radius: 8px; padding: 7px 10px; margin-left: -10px;
+  text-align: left; font-size: 15.5px; transition: background .15s;
+}
+.demo-list button:hover { background: var(--sand-deep); }
+.demo-list button[aria-current="true"] { background: var(--maroon); color: var(--white); }
+.demo-list .n { font-variant-numeric: tabular-nums; font-size: 13px; width: 18px; opacity: .65; flex: none; }
+.side .note { font-size: 13.5px; color: var(--ink-soft); margin-top: 18px; }
+.facts { border-top: 1.5px dashed var(--sand-shade); }
+.facts div { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1.5px dashed var(--sand-shade); font-size: 15px; }
+.facts dt { color: var(--ink-soft); }
+.facts dd { font-weight: 600; text-align: right; }
+.facts .stack { display: block; }
+.facts .stack dd { text-align: left; color: var(--wait); }
+
+.phone-wrap { width: 414px; }
+.phone {
+  width: 414px; height: 868px; padding: 12px;
+  background: var(--ink); border-radius: 54px;
+  box-shadow: 0 34px 60px -28px rgba(34, 30, 32, .55), 0 10px 22px -12px rgba(34, 30, 32, .3);
+  transform-origin: top center;
+}
+.app {
+  position: relative; width: 100%; height: 100%;
+  background: var(--sand); border-radius: 42px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.statusbar {
+  flex: none; height: 44px; padding: 0 30px 0 34px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 15px; font-weight: 600; color: var(--ink);
+}
+.statusbar svg { width: 62px; height: 14px; }
+.app[data-tone="maroon"] .statusbar { background: var(--maroon); color: var(--white); }
+.app[data-tone="ink"] .statusbar { background: var(--ink); color: var(--white); }
+.app[data-tone="white"] .statusbar { background: var(--white); }
+
+@media (max-width: 1180px) { .side-right { display: none; } .stage { grid-template-columns: minmax(0, 1fr) auto; } }
+@media (max-width: 860px)  { .side { display: none; } .stage { grid-template-columns: auto; justify-content: center; } }
+@media (max-width: 600px) {
+  .stage { display: block; padding: 0; min-height: 0; }
+  .phone-wrap { width: 100%; height: auto !important; }
+  .phone { width: 100%; height: 100dvh; padding: 0; border-radius: 0; box-shadow: none; transform: none !important; }
+  .app { border-radius: 0; }
+  .statusbar { display: none; }
+}
+
+/* ------------------------------------------------------------------
+   APP SHELL
+------------------------------------------------------------------- */
+.view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.view.enter { animation: enter .22s var(--ease); }
+@keyframes enter { from { opacity: .4; transform: translateY(6px); } }
+.scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--sand-shade) transparent; }
+.pad { padding: 16px 20px 28px; }
+
+.bar {
+  flex: none; min-height: 56px; display: flex; align-items: center; gap: 4px;
+  padding: 4px 8px; background: var(--sand);
+}
+.bar h1 { font-size: 18px; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar .sub { display: block; font-size: 13px; font-weight: 400; color: var(--ink-soft); }
+.bar.white { background: var(--white); border-bottom: 1px solid var(--sand-line); }
+.bar.ink { background: var(--ink); color: var(--white); }
+.bar.ink .sub { color: var(--ink-20); }
+.bar-home { padding: 0 12px 0 14px; justify-content: space-between; min-height: 68px; }
+/* Wordmark with rimmed button: minimum 120 px wide. The SVG carries its own margin; the 20 px either side completes the clear zone. */
+.bar-home .logo { width: 132px; height: auto; }
+.iconbtn {
+  flex: none; width: var(--tap); height: var(--tap); display: grid; place-items: center;
+  background: none; border: 0; border-radius: 50%; transition: background .15s;
+}
+.iconbtn:hover { background: rgba(34, 30, 32, .07); }
+.bar.ink .iconbtn:hover { background: rgba(255, 255, 255, .14); }
+.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.sm { width: 18px; height: 18px; }
+.ic.xs { width: 14px; height: 14px; stroke-width: 2.2; }
+.ic.fill { fill: currentColor; stroke: none; }
+
+.tabbar {
+  flex: none; display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--white); border-top: 1px solid var(--sand-line);
+  padding: 6px 8px calc(8px + env(safe-area-inset-bottom));
+}
+.tabbar[hidden] { display: none; }
+.tabbar button {
+  background: none; border: 0; padding: 6px 0 2px; border-radius: 12px;
+  display: grid; justify-items: center; gap: 2px;
+  font-size: 12.5px; font-weight: 500; color: var(--ink-soft);
+}
+.tabbar button[aria-current="page"] { color: var(--maroon); font-weight: 600; }
+.tabbar button[aria-current="page"] .ic { stroke-width: 2.1; }
+
+.actionbar {
+  flex: none; display: flex; gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--white); border-top: 1px solid var(--sand-line);
+}
+
+.actionbar .btn { padding: 10px 12px; white-space: nowrap; }
+.actionbar .btn.chatbtn { flex: 1.55; font-size: 15.5px; gap: 6px; }
+@media (max-width: 374px) { .actionbar .btn.chatbtn { font-size: 14.5px; } .actionbar { padding-left: 12px; padding-right: 12px; } }
+
+/* ------------------------------------------------------------------
+   COMPONENTS
+------------------------------------------------------------------- */
+.btn {
+  flex: 1; min-height: 52px; padding: 10px 18px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 12px; border: 1.5px solid transparent;
+  font-size: 16.5px; font-weight: 600; line-height: 1.15; text-decoration: none; text-align: center;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+.btn:active { transform: scale(.985); }
+.btn-primary { background: var(--maroon); color: var(--white); }
+.btn-primary:hover { background: var(--maroon-dark); }
+.btn-secondary { background: var(--white); color: var(--ink); border-color: var(--ink); }
+.btn-secondary:hover { background: var(--sand); }
+.btn-quiet { background: transparent; color: var(--maroon); border-color: var(--maroon-60); border-style: dashed; }
+.btn-quiet:hover { background: var(--maroon-wash); }
+.btn-ok { background: var(--ok); color: var(--white); }
+.btn-ok:hover { background: #335A42; }
+.btn.block { width: 100%; }
+.btn.sm { min-height: 44px; font-size: 15px; padding: 8px 14px; }
+.btn-white { background: var(--white); color: var(--maroon); }
+.btn-outline-white { background: transparent; color: var(--white); border-color: rgba(255,255,255,.75); }
+.btn-outline-white:hover { background: rgba(255,255,255,.12); }
+
+.link { color: var(--maroon); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; padding: 0; }
+
+/* Sewn-in label: the "reviewed" mark and other small tags */
+.sewn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 9px 5px 7px; border-radius: 5px;
+  background: var(--white); color: var(--maroon);
+  font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; line-height: 1; white-space: nowrap;
+  outline: 1.25px dashed var(--maroon-60); outline-offset: -3.5px;
+}
+.sewn.lg { font-size: 12.5px; padding: 8px 12px 8px 10px; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.wait { background: var(--wait-wash); color: var(--wait); }
+.pill.live { background: var(--ok-wash); color: var(--ok); }
+.pill.sold { background: var(--maroon-wash); color: var(--maroon); }
+.pill.no   { background: var(--err-wash); color: var(--err); }
+
+.section-title { font-size: 17px; font-weight: 600; margin: 26px 0 10px; }
+.section-title:first-child { margin-top: 4px; }
+.muted { color: var(--ink-soft); }
+.small { font-size: 14px; }
+.panel { background: var(--white); border-radius: var(--radius); padding: 16px; }
+.panel + .panel { margin-top: 12px; }
+.note-strip { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--maroon-wash); font-size: 14.5px; }
+.note-strip .ic { color: var(--maroon); margin-top: 1px; }
+.note-strip.plain { background: var(--white); }
+.tbc { display: inline-block; font-weight: 600; color: var(--wait); background: var(--wait-wash); padding: 1px 7px; border-radius: 5px; }
+.demo-tag { font-size: 12.5px; color: var(--ink-soft); text-align: center; margin-top: 8px; }
+
+.rows > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 9px 0; }
+.rows > div + div { border-top: 1px solid var(--sand-line); }
+.rows dt { color: var(--ink-soft); }
+.rows dd { font-weight: 500; text-align: right; }
+.rows .total dt, .rows .total dd { color: var(--ink); font-weight: 700; font-size: 17px; }
+
+.field { display: grid; gap: 6px; margin-top: 16px; }
+.field label, .field .label { font-size: 14.5px; font-weight: 600; }
+.field .hint { font-size: 13.5px; color: var(--ink-soft); }
+.input, .select, .textarea {
+  width: 100%; min-height: 50px; padding: 11px 14px;
+  background: var(--white); border: 1.5px solid var(--sand-line); border-radius: var(--radius-sm);
+  caret-color: var(--maroon);
+}
+.input::placeholder, .textarea::placeholder { color: var(--ink-soft); opacity: 1; }
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px var(--maroon-30); }
+.select { appearance: none; padding-right: 38px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23221E20' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; }
+.field.invalid .input, .field.invalid .select { border-color: var(--err); }
+.error { color: var(--err); font-size: 14px; font-weight: 500; display: flex; gap: 6px; align-items: center; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.choice { display: grid; gap: 8px; }
+.choice.inline { grid-template-columns: 1fr 1fr; }
+.choice label {
+  position: relative; display: flex; align-items: center; gap: 12px;
+  min-height: 52px; padding: 10px 14px;
+  background: var(--white); border: 1.5px solid var(--sand-line); border-radius: var(--radius-sm);
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.choice .dot { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--sand-shade); display: grid; place-items: center; }
+.choice .dot::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--maroon); transform: scale(0); transition: transform .15s var(--ease); }
+.choice label:has(input:checked) { border-color: var(--maroon); background: #FBF4F3; }
+.choice label:has(input:checked) .dot { border-color: var(--maroon); }
+.choice label:has(input:checked) .dot::after { transform: scale(1); }
+.choice label:has(input:focus-visible) { outline: 2.5px solid var(--maroon); outline-offset: 2px; }
+.choice .t { display: block; font-weight: 600; line-height: 1.25; }
+.choice .d { display: block; font-size: 13.5px; color: var(--ink-soft); line-height: 1.3; }
+.choice .end { margin-left: auto; font-size: 14px; color: var(--ink-soft); white-space: nowrap; }
+.choice.pills { display: flex; flex-wrap: wrap; }
+.choice.pills label { min-height: 42px; padding: 6px 14px; border-radius: 999px; font-weight: 500; font-size: 15px; }
+.choice.pills label:has(input:checked) { background: var(--maroon); color: var(--white); }
+
+.toast {
+  position: absolute; left: 16px; right: 16px; bottom: 86px; z-index: 30;
+  background: var(--ink); color: var(--white); padding: 13px 16px; border-radius: 12px;
+  font-size: 15px; font-weight: 500; display: flex; gap: 10px; align-items: center;
+  box-shadow: 0 14px 28px -12px rgba(34, 30, 32, .6);
+  opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .2s, transform .25s var(--ease);
+}
+.toast.show { opacity: 1; transform: none; }
+
+/* Garment tiles */
+.tile { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 10 / 11; }
+.tile svg { width: 100%; height: 100%; }
+.tile.white { background: var(--white); }
+.tile.wash  { background: var(--maroon-wash); }
+.tile.deep  { background: var(--sand-deep); }
+.thumb { width: 64px; flex: none; border-radius: 10px; }
+
+/* ------------------------------------------------------------------
+   SCREEN: splash
+------------------------------------------------------------------- */
+.splash { flex: 1; display: flex; flex-direction: column; padding: 8px 28px 28px; overflow: hidden; }
+.rail { position: relative; flex: none; height: 262px; margin: 0 -10px; }
+.rail .line { position: absolute; left: -30px; right: -30px; top: 2px; border-top: 2px dashed var(--sand-shade); }
+.tag {
+  position: absolute; top: 24px; width: 36%; background: var(--white); border-radius: 12px; padding: 22px 8px 8px;
+  box-shadow: 0 16px 26px -18px rgba(34, 30, 32, .5);
+  transform-origin: 50% 0; animation: sway 1.6s var(--ease) both;
+}
+.tag::before { content: ""; position: absolute; top: 8px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--sand); box-shadow: inset 0 1px 1px rgba(34,30,32,.25); }
+.tag::after { content: ""; position: absolute; top: -22px; left: 50%; height: 34px; border-left: 1.5px solid var(--maroon); }
+.tag .tile { border-radius: 8px; }
+.tag b { display: block; font-size: 12.5px; font-weight: 600; text-align: center; padding-top: 6px; color: var(--maroon); }
+.tag.t1 { left: 0; --r: -4deg; }
+.tag.t2 { left: 32%; top: 44px; --r: 1.5deg; z-index: 2; animation-delay: .08s; }
+.tag.t3 { right: 0; --r: 5deg; animation-delay: .16s; }
+.tag.t2::after { top: -42px; height: 54px; }
+@keyframes sway { 0% { transform: rotate(calc(var(--r) * -1.6)); } 45% { transform: rotate(calc(var(--r) * 1.5)); } 75% { transform: rotate(calc(var(--r) * .8)); } 100% { transform: rotate(var(--r)); } }
+.tag { transform: rotate(var(--r)); }
+/* Splash wordmark: 236 px wide, so the button "o" is about 44 px. Margins keep at least that much clear on every side. */
+.splash .logo { width: 236px; height: auto; margin: auto auto 0; }
+.splash .tagline { text-align: center; font-size: 19px; line-height: 1.3; margin: 14px auto 0; max-width: 16em; text-wrap: balance; }
+.splash .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: auto 0 0; padding-top: 18px; }
+.splash .points li { display: grid; justify-items: center; gap: 5px; text-align: center; font-size: 13.5px; line-height: 1.25; }
+.splash .points .ic { color: var(--maroon); }
+@media (max-height: 760px) { .splash .points { display: none; } .rail { height: 236px; } .tag { width: 33%; } }
+.splash .cta { display: grid; gap: 10px; margin-top: 22px; }
+.splash .foot { text-align: center; font-size: 13.5px; color: var(--ink-soft); margin-top: 14px; text-wrap: balance; }
+
+/* ------------------------------------------------------------------
+   SCREEN: home
+------------------------------------------------------------------- */
+.search { position: relative; margin: 4px 20px 0; }
+.search .ic { position: absolute; left: 14px; top: 50%; margin-top: -11px; width: 22px; height: 22px; color: var(--ink-soft); pointer-events: none; }
+.search .input { padding-left: 46px; border-radius: 999px; border-color: transparent; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 20px 4px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 40px; padding: 6px 15px; border-radius: 999px; border: 1.5px solid var(--sand-line); background: var(--white); font-size: 15px; font-weight: 500; white-space: nowrap; transition: background .15s, color .15s; }
+.chip[aria-pressed="true"] { background: var(--maroon); border-color: var(--maroon); color: var(--white); }
+.filter-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px 0; }
+.filter-row .count { font-size: 14.5px; color: var(--ink-soft); }
+.filter-row .select { width: auto; min-height: 42px; padding: 6px 36px 6px 14px; border-radius: 999px; font-size: 15px; font-weight: 500; }
+.promise { margin: 14px 20px 0; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 14px; padding: 16px 20px 28px; }
+.card { display: flex; flex-direction: column; align-self: start; text-align: left; background: none; border: 0; padding: 0; border-radius: var(--radius); min-width: 0; }
+.card .tile { transition: transform .25s var(--ease); }
+.card:hover .tile { transform: translateY(-3px); }
+.card .sewn { position: absolute; left: 8px; top: 8px; }
+.card .name { display: block; font-size: 15.5px; font-weight: 600; margin-top: 9px; line-height: 1.25; }
+.card .meta { display: block; font-size: 13.5px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .price { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 3px; }
+.card .price b { font-size: 17px; font-weight: 700; color: var(--maroon); white-space: nowrap; }
+.card .price span { font-size: 13px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty { grid-column: 1 / -1; text-align: center; padding: 34px 12px; }
+.empty h2 { font-size: 18px; font-weight: 600; }
+.empty p { color: var(--ink-soft); margin: 6px 0 16px; }
+
+/* ------------------------------------------------------------------
+   SCREEN: item details
+------------------------------------------------------------------- */
+.carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--white); }
+.carousel::-webkit-scrollbar { display: none; }
+.carousel .slide { flex: 0 0 100%; scroll-snap-align: center; aspect-ratio: 10 / 9.4; }
+.carousel .slide svg { width: 100%; height: 100%; }
+.carousel .slide.wash { background: var(--maroon-wash); }
+.carousel .slide.deep { background: var(--sand-deep); }
+.shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--sand-line); }
+.shots button { min-height: 40px; border: 0; border-radius: 8px; background: none; font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+.shots button[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+.item-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+.item-head h2 { font-size: 23px; font-weight: 600; line-height: 1.2; }
+.item-head .price { font-size: 23px; font-weight: 700; color: var(--maroon); white-space: nowrap; }
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--sand-line); border-radius: var(--radius); overflow: hidden; margin-top: 16px; }
+.specs div { background: var(--white); padding: 11px 14px; }
+.specs .wide { grid-column: 1 / -1; }
+.specs dt { font-size: 13px; color: var(--ink-soft); }
+.specs dd { font-weight: 600; }
+.seller { display: flex; align-items: center; gap: 12px; }
+.avatar { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--maroon); color: var(--white); display: grid; place-items: center; font-weight: 600; font-size: 18px; }
+.seller .who { flex: 1; min-width: 0; }
+.seller .who b { display: block; font-weight: 600; }
+.rating { display: inline-flex; align-items: center; gap: 4px; font-size: 14.5px; color: var(--ink-soft); }
+.rating .ic { color: var(--maroon); }
+
+/* ------------------------------------------------------------------
+   SCREEN: chat
+------------------------------------------------------------------- */
+.chat-item { flex: none; display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--sand-line); }
+.chat-item .thumb { width: 46px; border-radius: 8px; }
+.chat-item .t { flex: 1; min-width: 0; font-weight: 600; line-height: 1.25; }
+.chat-item .t span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-soft); }
+.thread { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.thread .sys { align-self: center; max-width: 30em; text-align: center; font-size: 13.5px; color: var(--ink-soft); padding: 4px 12px 10px; }
+.msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 15.5px; line-height: 1.38; }
+.msg small { display: block; font-size: 12px; margin-top: 3px; opacity: .72; }
+.msg.them { align-self: flex-start; background: var(--white); border-bottom-left-radius: 6px; }
+.msg.me { align-self: flex-end; background: var(--maroon); color: var(--white); border-bottom-right-radius: 6px; }
+.composer { flex: none; display: flex; gap: 8px; align-items: center; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--white); border-top: 1px solid var(--sand-line); }
+.composer .input { border-radius: 999px; min-height: 46px; background: var(--sand); border-color: transparent; }
+.composer .send { flex: none; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--maroon); color: var(--white); display: grid; place-items: center; }
+.composer .send:hover { background: var(--maroon-dark); }
+
+/* ------------------------------------------------------------------
+   SCREEN: checkout
+------------------------------------------------------------------- */
+.mini { display: flex; gap: 14px; align-items: center; }
+.mini .t { flex: 1; min-width: 0; }
+.mini .t b { display: block; font-weight: 600; line-height: 1.25; }
+.mini .t span { font-size: 14px; color: var(--ink-soft); }
+.mini .p { font-weight: 700; white-space: nowrap; }
+.fee { background: var(--white); border-radius: var(--radius); padding: 14px 16px 16px; outline: 1.5px dashed var(--maroon-60); outline-offset: -6px; }
+.fee .route { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.fee .route b { font-weight: 600; white-space: nowrap; }
+.fee .route .ic { color: var(--maroon); }
+.fee .route .dash { flex: 1; min-width: 14px; border-top: 1.5px dashed var(--sand-shade); }
+.fee .km { font-size: 14.5px; color: var(--ink-soft); margin-top: 2px; white-space: normal; }
+.fee .sum { display: flex; align-items: baseline; justify-content: space-between; gap: 4px 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--sand-line); flex-wrap: wrap; }
+.fee .formula { font-size: 14.5px; }
+.fee .result { font-size: 22px; font-weight: 700; color: var(--maroon); white-space: nowrap; }
+
+/* ------------------------------------------------------------------
+   SCREEN: tracking
+------------------------------------------------------------------- */
+.steps { position: relative; padding: 4px 0; }
+.steps li { position: relative; display: grid; grid-template-columns: 30px 1fr; gap: 14px; padding-bottom: 22px; }
+.steps li:last-child { padding-bottom: 0; }
+.steps li::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: 0; border-left: 2px dashed var(--sand-shade); }
+.steps li:last-child::before { display: none; }
+.steps li.done::before { border-left: 2px solid var(--maroon); }
+.steps .mark { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--sand-shade); background: var(--white); display: grid; place-items: center; color: var(--white); z-index: 1; }
+.steps li.done .mark { background: var(--maroon); border-color: var(--maroon); }
+.steps li.now .mark { border-color: var(--maroon); box-shadow: 0 0 0 5px var(--maroon-30); }
+.steps li.now .mark::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--maroon); }
+.steps b { display: block; font-weight: 600; line-height: 1.3; padding-top: 3px; }
+.steps li.todo b { color: var(--ink-soft); font-weight: 500; }
+.steps span { font-size: 14px; color: var(--ink-soft); }
+
+/* ------------------------------------------------------------------
+   SCREENS: sell
+------------------------------------------------------------------- */
+.progress { display: flex; gap: 6px; padding: 0 20px 4px; }
+.progress i { flex: 1; height: 5px; border-radius: 3px; background: var(--sand-line); }
+.progress i.on { background: var(--maroon); }
+.slots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.slot {
+  position: relative; aspect-ratio: 10 / 11; padding: 10px; border: 0; border-radius: var(--radius);
+  background: var(--white); outline: 1.5px dashed var(--maroon-60); outline-offset: -6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center;
+}
+.slot .guide { width: 54px; height: 54px; color: var(--maroon-60); stroke-width: 1.4; }
+.slot b { font-weight: 600; line-height: 1.2; }
+.slot span { font-size: 13px; color: var(--ink-soft); line-height: 1.25; max-width: 11em; }
+.slot .add { display: inline-flex; align-items: center; gap: 4px; color: var(--maroon); font-weight: 600; font-size: 14px; margin-top: 2px; }
+.slot.filled { padding: 0; outline: none; overflow: hidden; display: block; }
+.slot.filled svg.art { width: 100%; height: 100%; }
+.slot.filled .sewn { position: absolute; left: 8px; bottom: 8px; }
+.payout { background: var(--white); border-radius: var(--radius); padding: 6px 16px; margin-top: 10px; }
+.payout .rows .get dt, .payout .rows .get dd { color: var(--maroon); font-weight: 700; font-size: 17px; }
+.done-mark { width: 92px; height: 92px; margin: 26px auto 0; border-radius: 50%; background: var(--white); display: grid; place-items: center; outline: 1.5px dashed var(--maroon-60); outline-offset: -8px; color: var(--maroon); }
+.done-mark .ic { width: 40px; height: 40px; stroke-width: 2; }
+.next li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 11px 0; }
+.next li + li { border-top: 1px solid var(--sand-line); }
+.next .k { width: 28px; height: 28px; border-radius: 50%; background: var(--maroon-wash); color: var(--maroon); font-weight: 700; font-size: 14px; display: grid; place-items: center; }
+
+.listing { display: flex; gap: 14px; align-items: flex-start; }
+.listing .t { flex: 1; min-width: 0; }
+.listing .t b { display: block; font-weight: 600; line-height: 1.25; }
+.listing .t .muted { font-size: 14px; }
+.listing .pill { margin-top: 7px; }
+.earn { margin-top: 12px; padding-top: 4px; border-top: 1.5px dashed var(--sand-shade); }
+.headline { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.headline b { font-size: 26px; font-weight: 700; color: var(--maroon); white-space: nowrap; }
+
+.check-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding: 12px 14px; background: var(--white); border-radius: var(--radius-sm); font-size: 14.5px; line-height: 1.35; cursor: pointer; }
+.check-row input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--maroon); cursor: pointer; }
+.evidence { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; margin-top: 4px; }
+.ev .tile { aspect-ratio: 1; border-radius: 10px; }
+.ev figcaption { font-size: 12.5px; color: var(--ink-soft); text-align: center; margin-top: 3px; }
+.ev-add { aspect-ratio: 1; border: 0; border-radius: 10px; background: var(--white); outline: 1.5px dashed var(--maroon-60); outline-offset: -5px; color: var(--maroon); display: grid; place-content: center; justify-items: center; gap: 4px; font-size: 14px; font-weight: 600; transition: background .15s; }
+.ev-add:hover { background: var(--maroon-wash); }
+
+/* ------------------------------------------------------------------
+   SCREEN: profile and help
+------------------------------------------------------------------- */
+.menu-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 54px; padding: 8px 2px; background: none; border: 0; text-align: left; text-decoration: none; color: inherit; }
+.menu-row + .menu-row { border-top: 1px solid var(--sand-line); }
+.menu-row .ic:first-child { color: var(--maroon); }
+.menu-row .t { flex: 1; font-weight: 600; line-height: 1.25; }
+.menu-row .t span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-soft); }
+.faq details { border-top: 1px solid var(--sand-line); }
+.faq details:first-child { border-top: 0; }
+.faq summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 0; font-weight: 600; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .ic { transition: transform .2s var(--ease); color: var(--maroon); }
+.faq details[open] summary .ic { transform: rotate(180deg); }
+.faq p { padding: 0 0 14px; color: var(--ink-soft); font-size: 15px; }
+.faq p + p { margin-top: -6px; }
+
+/* App icon: the kit's symbol/relore-symbol-app-icon.svg at 48 px (the minimum for the symbol is 24 px) */
+.about { display: flex; align-items: center; gap: 28px; margin-top: 36px; padding: 0 4px; }   /* 28 px + the icon's own margin = one button diameter of clear space */
+.about img { width: 48px; height: 48px; flex: none; }
+.about b { font-weight: 600; }
+
+/* ------------------------------------------------------------------
+   SCREEN: admin
+------------------------------------------------------------------- */
+.review .photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.review .photos figure { position: relative; }
+.review .photos .tile { border-radius: 8px; }
+.review .photos figcaption { font-size: 12px; color: var(--ink-soft); text-align: center; margin-top: 3px; }
+.review h2 { font-size: 18px; font-weight: 600; margin-top: 12px; line-height: 1.25; }
+.checks { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 12px 0 14px; font-size: 14.5px; }
+.checks li { display: flex; gap: 5px; align-items: center; white-space: nowrap; }
+.checks .ic { color: var(--ok); }
+.review .actions { display: flex; gap: 10px; }
+
+/* ------------------------------------------------------------------
+   DEMO MENU (small handle + sheet; hidden with ?clean=1)
+------------------------------------------------------------------- */
+.demo-handle {
+  position: absolute; right: 0; top: 46%; z-index: 20;
+  width: 26px; height: 58px; padding: 0; border: 0; border-radius: 12px 0 0 12px;
+  background: var(--ink); color: var(--white); opacity: .5; display: none; place-items: center;
+  transition: opacity .15s;
+}
+.demo-handle:hover, .demo-handle:focus-visible { opacity: 1; }
+@media (max-width: 860px) { .demo-handle { display: grid; } }
+.clean .demo-handle { display: none !important; }
+.sheet-back { position: absolute; inset: 0; z-index: 40; background: rgba(34, 30, 32, .45); display: none; align-items: flex-end; }
+.sheet-back.open { display: flex; }
+.sheet { width: 100%; max-height: 82%; overflow-y: auto; background: var(--sand); border-radius: 22px 22px 0 0; padding: 14px 20px calc(18px + env(safe-area-inset-bottom)); animation: rise .25s var(--ease); }
+@keyframes rise { from { transform: translateY(30px); opacity: .6; } }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; }
+.sheet-head h2 { font-size: 18px; font-weight: 600; }
+.sheet .demo-list button { margin-left: 0; min-height: 44px; align-items: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <aside class="side" aria-label="About this prototype">
+    <img class="brand-logo" src="assets/relore-horizontal-color.svg" alt="Relore">
+    <h1>Clickable app prototype</h1>
+    <p class="lede">A managed marketplace for pre-owned clothing in Qatar. CMPS307, Part 4: product and pitch.</p>
+    <h2>Demo screens</h2>
+    <div class="demo-list" id="demoSide"></div>
+    <p class="note">Sample data only. No real payments are taken.</p>
+  </aside>
+
+  <div class="phone-wrap" id="phoneWrap">
+    <div class="phone" id="phone">
+      <div class="app" id="app">
+        <div class="statusbar" aria-hidden="true">
+          <span>9:41</span>
+          <svg viewBox="0 0 62 14" fill="currentColor"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M25 5.2a9 9 0 0 1 12 0l-1.4 1.5a7 7 0 0 0-9.2 0zm2.6 2.9a5 5 0 0 1 6.8 0L31 11.8z"/><rect x="43.5" y="1.5" width="15" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="45.5" y="3.5" width="11" height="7" rx="1.5"/><rect x="59.6" y="5" width="1.6" height="4" rx=".8"/></svg>
+        </div>
+        <main class="view" id="view"></main>
+        <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        <button class="demo-handle" id="demoHandle" type="button" aria-label="Open demo screens menu" data-act="demo-open">
+          <svg class="ic sm" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
+        </button>
+        <div class="sheet-back" id="sheetBack">
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+            <div class="sheet-head">
+              <h2 id="sheetTitle">Demo screens</h2>
+              <button class="iconbtn" type="button" aria-label="Close demo screens menu" data-act="demo-close"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            </div>
+            <div class="demo-list" id="demoSheet"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side side-right" aria-label="Fees used in this prototype">
+    <h2 style="margin-top:0">Fees in this prototype</h2>
+    <dl class="facts" id="facts"></dl>
+    <p class="note">Every amount in the app is worked out by the same fee functions, so the figures always agree.</p>
+  </aside>
+</div>
+
+<script>
+/* ====================================================================
+   1. ONE SOURCE OF TRUTH: fees, policy wording, contact details
+   ==================================================================== */
+const FEES = Object.freeze({
+  deliveryBase: 15,       // QAR, flat part of the delivery fee
+  deliveryPerKm: 0.80,    // QAR per km of road distance, seller's address to buyer's address
+  commissionRate: 0.20    // Relore commission on the sale price, deducted from the seller's payout
+});
+
+const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+/** Delivery fee the buyer pays upfront: QAR 15 + QAR 0.80 per km. */
+function deliveryFee(km) { return round2(FEES.deliveryBase + FEES.deliveryPerKm * km); }
+/** Relore commission: 20% of the sale price. */
+function commission(price) { return round2(price * FEES.commissionRate); }
+/** What the seller receives: the sale price less the commission (80%). */
+function sellerPayout(price) { return round2(price - commission(price)); }
+/** What the buyer pays, and when. itemPay is 'card' or 'cod' (cash on delivery). */
+function orderTotals(price, km, itemPay) {
+  const delivery = deliveryFee(km);
+  const payOnDelivery = itemPay === 'cod' ? price : 0;
+  return { item: price, delivery, total: round2(price + delivery), payNow: round2(price + delivery - payOnDelivery), payOnDelivery };
+}
+/** Money formatting. "QAR 45" for whole prices on listings, "QAR 24.60" where dp = 2. */
+function qar(n, dp) {
+  const s = (dp === 2 || !Number.isInteger(n)) ? n.toFixed(2) : String(n);
+  return 'QAR ' + s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+const pct = r => Math.round(r * 100) + '%';
+
+/* Undecided group policy: edit this one line when the group decides. */
+const POLICY_TBC = '[Policy to be confirmed]';
+
+const POLICY = Object.freeze({
+  buyer: 'There are no general returns. If an item does not match its listing, you can decline it at handover and you will get a refund.',
+  seller: 'If a buyer declines your item because it does not match its listing, you receive penalty points and a lower seller rating. Relore reviews each case and asks for your side first. Repeated or deliberate misrepresentation leads to a permanent ban, linked to your Qatar ID.',
+  sellerShort: 'The seller receives penalty points and a lower rating. Repeated or deliberate misrepresentation leads to a permanent ban, linked to their Qatar ID.',
+  legal: 'This does not affect your legal rights as a consumer in Qatar.',
+  returnCostLabel: 'Who pays to return a declined item to the seller',
+  returnCost: POLICY_TBC
+});
+
+const BRAND = Object.freeze({
+  tagline: 'Pre-owned clothing, reviewed and delivered.',   // placeholder wording: confirm with the group
+  whatsappDisplay: '+974 0000 0000',                        // placeholder number
+  whatsappLink: 'https://wa.me/97400000000',
+  social: '@relore.qa'
+});
+
+/* Logo files: every use of the logo points at these copies in prototype/assets/. */
+const LOGO = Object.freeze({
+  colour: 'assets/relore-horizontal-color.svg',
+  white: 'assets/relore-horizontal-white.svg',
+  symbol: 'assets/relore-symbol-color.svg',
+  appIcon: 'assets/relore-symbol-app-icon.svg'
+});
+
+/* ====================================================================
+   2. SAMPLE DATA
+   ==================================================================== */
+const CATEGORIES = [
+  ['all', 'All'], ['women', 'Women’s'], ['men', 'Men’s'], ['children', 'Children’s'],
+  ['abaya', 'Abayas and thobes'], ['designer', 'Designer and luxury']
+];
+const CAT_NAME = Object.fromEntries(CATEGORIES);
+const SIZE_FILTERS = [['all', 'All sizes'], ['S', 'S'], ['M', 'M'], ['L', 'L'], ['kids', 'Children’s sizes'], ['numbered', 'Numbered sizes']];
+const CONDITIONS = ['Like new', 'Very good', 'Good', 'Fair'];
+const AREAS = ['Al Sadd', 'Lusail', 'Al Rayyan', 'Al Wakrah', 'The Pearl', 'West Bay', 'Education City', 'Al Gharrafa'];
+
+/* The buyer's saved addresses, and sample road distances (km) from each seller area.
+   In the real app the distance would come from a maps service. */
+const ADDRESSES = [
+  { id: 'ec', label: 'Home', area: 'Education City' },
+  { id: 'wb', label: 'Work', area: 'West Bay' },
+  { id: 'wk', label: 'Family home', area: 'Al Wakrah' }
+];
+const ROAD_KM = {
+  'Al Sadd':        { ec: 12, wb: 7,  wk: 18 },
+  'Lusail':         { ec: 19, wb: 14, wk: 34 },
+  'Al Rayyan':      { ec: 6,  wb: 16, wk: 26 },
+  'Al Wakrah':      { ec: 28, wb: 22, wk: 3 },
+  'The Pearl':      { ec: 20, wb: 8,  wk: 28 },
+  'West Bay':       { ec: 15, wb: 2,  wk: 22 },
+  'Education City': { ec: 2,  wb: 15, wk: 28 },
+  'Al Gharrafa':    { ec: 5,  wb: 12, wk: 27 }
+};
+const roadKm = (sellerArea, addrId) => ROAD_KM[sellerArea][addrId];
+
+const LISTINGS = [
+  { id: 'linen-shirt', title: 'Linen shirt', cat: 'women', brand: 'Zara', size: 'M', sg: 'M', cond: 'Very good', price: 45, area: 'Al Sadd',
+    seller: { name: 'Noor A.', rating: 4.8, sales: 12 }, meas: 'Chest 52 cm, length 68 cm (laid flat)', defect: 'Small mark on the left cuff', art: 'shirt', pal: 'sand', bg: 'wash' },
+  { id: 'denim-jacket', title: 'Denim jacket', cat: 'men', brand: 'Levi’s', size: 'L', sg: 'L', cond: 'Good', price: 120, area: 'Lusail',
+    seller: { name: 'Hamad K.', rating: 4.6, sales: 7 }, meas: 'Chest 58 cm, length 66 cm (laid flat)', defect: 'Light fading at the elbows', art: 'jacket', pal: 'slate', bg: 'deep' },
+  { id: 'abaya', title: 'Abaya with embroidered cuffs', cat: 'abaya', brand: 'Tailor-made', size: '56', sg: 'numbered', cond: 'Like new', price: 180, area: 'Al Rayyan',
+    seller: { name: 'Hessa K.', rating: 4.9, sales: 21 }, meas: 'Length 142 cm, sleeve 60 cm', defect: '', art: 'abaya', pal: 'ink', bg: 'wash' },
+  { id: 'thobe', title: 'White thobe', cat: 'abaya', brand: 'Tailor-made', size: '58', sg: 'numbered', cond: 'Very good', price: 90, area: 'Al Wakrah',
+    seller: { name: 'Yousef R.', rating: 4.7, sales: 5 }, meas: 'Length 147 cm, chest 56 cm', defect: '', art: 'thobe', pal: 'cream', bg: 'deep' },
+  { id: 'wool-coat', title: 'Wool-blend coat', cat: 'women', brand: 'Massimo Dutti', size: 'S', sg: 'S', cond: 'Very good', price: 220, area: 'The Pearl',
+    seller: { name: 'Dana F.', rating: 4.9, sales: 16 }, meas: 'Chest 48 cm, length 98 cm (laid flat)', defect: 'Slight bobbling under the arms', art: 'coat', pal: 'maroon', bg: 'white' },
+  { id: 'kids-hoodie', title: 'Hoodie, age 6 to 7', cat: 'children', brand: 'H&M', size: '6–7 years', sg: 'kids', cond: 'Good', price: 25, area: 'Al Wakrah',
+    seller: { name: 'Priya N.', rating: 4.5, sales: 9 }, meas: 'Chest 38 cm, length 46 cm (laid flat)', defect: 'Faded print on the pocket', art: 'hoodie', pal: 'rose', bg: 'white' },
+  { id: 'polo', title: 'Cotton polo shirt', cat: 'designer', brand: 'Ralph Lauren', size: 'M', sg: 'M', cond: 'Like new', price: 150, area: 'West Bay',
+    seller: { name: 'Omar T.', rating: 4.8, sales: 11 }, meas: 'Chest 53 cm, length 71 cm (laid flat)', defect: '', art: 'polo', pal: 'maroon', bg: 'deep' },
+  { id: 'midi-dress', title: 'Midi dress', cat: 'women', brand: 'Mango', size: 'M', sg: 'M', cond: 'Like new', price: 85, area: 'Education City',
+    seller: { name: 'Sara M.', rating: 4.7, sales: 8 }, meas: 'Bust 46 cm, length 118 cm (laid flat)', defect: '', art: 'dress', pal: 'rose', bg: 'wash' },
+  { id: 'chinos', title: 'Slim chinos', cat: 'men', brand: 'Uniqlo', size: '32', sg: 'numbered', cond: 'Good', price: 55, area: 'Al Gharrafa',
+    seller: { name: 'Ahmed B.', rating: 4.4, sales: 4 }, meas: 'Waist 82 cm, inside leg 79 cm', defect: 'Minor wear at the hems', art: 'trousers', pal: 'sand', bg: 'white' },
+  { id: 'blazer', title: 'Tailored blazer', cat: 'designer', brand: 'BOSS', size: 'L', sg: 'L', cond: 'Very good', price: 380, area: 'Lusail',
+    seller: { name: 'Khalid M.', rating: 5.0, sales: 3 }, meas: 'Chest 56 cm, length 74 cm (laid flat)', defect: '', art: 'blazer', pal: 'ink', bg: 'deep' },
+  { id: 'dungarees', title: 'Denim dungarees, age 3 to 4', cat: 'children', brand: 'Zara Kids', size: '3–4 years', sg: 'kids', cond: 'Very good', price: 35, area: 'Al Rayyan',
+    seller: { name: 'Layla H.', rating: 4.8, sales: 14 }, meas: 'Waist 26 cm, inside leg 38 cm (laid flat)', defect: '', art: 'dungarees', pal: 'slate', bg: 'wash' },
+  { id: 'jumper', title: 'Striped crew-neck jumper', cat: 'men', brand: 'Marks & Spencer', size: 'M', sg: 'M', cond: 'Good', price: 40, area: 'Al Sadd',
+    seller: { name: 'Reem J.', rating: 4.6, sales: 6 }, meas: 'Chest 54 cm, length 67 cm (laid flat)', defect: 'A pulled thread near the hem', art: 'jumper', pal: 'cream', bg: 'deep' }
+];
+
+const SHOTS = [['front', 'Front'], ['back', 'Back'], ['label', 'Label'], ['defects', 'Defects']];
+
+const state = {
+  listings: LISTINGS.map(l => ({ ...l })),
+  filters: { q: '', cat: 'all', size: 'all' },
+  checkout: { addr: 'ec', feePay: 'card', itemPay: 'card' },
+  chats: {},
+  orders: [
+    { id: 'RL-1038', title: 'Pleated midi skirt', brand: 'Mango', size: 'M', art: 'skirt', pal: 'maroon', bg: 'deep', area: 'Al Sadd',
+      addr: 'ec', km: 12, price: 60, itemPay: 'card', feePay: 'card', step: 3, times: ['2 Nov, 10:05', '2 Nov, 13:20', '2 Nov, 13:48', '2 Nov, 14:15'], issue: false }
+  ],
+  orderSeq: 1042,
+  mine: [
+    { id: 'm1', title: 'Cotton cardigan', brand: 'Mango', size: 'M', price: 150, status: 'sold', art: 'cardigan', pal: 'rose', bg: 'white' },
+    { id: 'm2', title: 'Pleated skirt', brand: 'Zara', size: 'S', price: 60, status: 'live', art: 'skirt', pal: 'ink', bg: 'wash' },
+    { id: 'm3', title: 'Hooded rain jacket', brand: 'Decathlon', size: 'M', price: 95, status: 'wait', art: 'hoodie', pal: 'maroon', bg: 'deep' }
+  ],
+  queue: [
+    { id: 'q1', mineId: 'm3', title: 'Hooded rain jacket', brand: 'Decathlon', size: 'M', cond: 'Very good', price: 95, area: 'Education City', cat: 'women',
+      seller: 'Demo account', meas: 'Chest 55 cm, length 70 cm (laid flat)', defect: '', art: 'hoodie', pal: 'maroon', bg: 'deep', rejecting: false },
+    { id: 'q2', title: 'Open abaya with belt', brand: 'Tailor-made', size: '54', cond: 'Like new', price: 140, area: 'Al Rayyan', cat: 'abaya',
+      seller: 'Fatima H.', meas: 'Length 140 cm, sleeve 58 cm', defect: '', art: 'abaya', pal: 'slate', bg: 'wash', rejecting: false },
+    { id: 'q3', title: 'School blazer, age 9 to 10', brand: 'Marks & Spencer', size: '9–10 years', cond: 'Good', price: 40, area: 'Al Wakrah', cat: 'children',
+      seller: 'Joseph D.', meas: 'Chest 40 cm, length 54 cm (laid flat)', defect: 'Small repair to the lining', art: 'blazer', pal: 'maroon', bg: 'white', rejecting: false }
+  ],
+  draft: null,
+  lastSubmitted: null,
+  mineSeq: 4
+};
+
+function freshDraft() {
+  return {
+    photos: { front: false, back: false, label: false, defects: false },
+    title: 'Denim shirt', cat: 'women', brand: 'Gap', size: 'M', chest: '52', length: '70',
+    cond: 'Very good', defect: '', price: '60', area: 'Education City',
+    art: 'shirt', pal: 'slate', bg: 'wash', errors: {}, photoError: false, noDefects: false
+  };
+}
+state.draft = freshDraft();
+
+/* ====================================================================
+   3. ILLUSTRATIONS (inline SVG, brand tints only, no photographs)
+   ==================================================================== */
+const PAL = {
+  maroon: { m: '#8A1538', s: '#6E102C', l: '#B97388', d: '#F3ECE2' },
+  rose:   { m: '#CF9AA7', s: '#B97388', l: '#E9CBD2', d: '#8A1538' },
+  ink:    { m: '#2F2A2C', s: '#221E20', l: '#5C5658', d: '#DCB9C3' },
+  slate:  { m: '#6F696B', s: '#565052', l: '#8F898B', d: '#F3ECE2' },
+  sand:   { m: '#D8C9B3', s: '#BFAD93', l: '#EADFCF', d: '#8A1538' },
+  cream:  { m: '#FBF8F3', s: '#D8C9B3', l: '#FFFFFF', d: '#8A1538' }
+};
+
+function art(kind, pal, view = 'front', o = {}) {
+  const p = PAL[pal] || PAL.sand, { m, s, l, d } = p;
+  const sil = dd => `<path d="${dd}" fill="${m}" stroke="${m}" stroke-width="5" stroke-linejoin="round"/>`;
+  const ln = (dd, w = 2, c = s) => `<path d="${dd}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const pg = (pts, c = s) => `<polygon points="${pts}" fill="${c}" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  const dots = (pts, c = d, r = 2.7) => pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`).join('');
+  const back = view === 'back';
+  const n = back ? 43 : 54;                                    // neckline depth
+  const longTop = H => `M82 40 L60 47 L27 150 L49 157 L68 98 L66 ${H} L134 ${H} L132 98 L151 157 L173 150 L140 47 L118 40 Q100 ${n} 82 40Z`;
+  const shortTop = H => `M82 40 L58 48 L32 88 L52 100 L67 84 L66 ${H} L134 ${H} L133 84 L148 100 L168 88 L142 48 L118 40 Q100 ${n} 82 40Z`;
+  const neckIn = back ? '' : `<path d="M82 40 Q100 54 118 40 Q100 45 82 40Z" fill="${s}"/>`;
+  const seams = ln('M68 98 L65 64', 1.6) + ln('M132 98 L135 64', 1.6);
+  const cuffs = pg('27,150 49,157 52,148 30,141') + pg('173,150 151,157 148,148 170,141');
+  const hem = H => `<rect x="66" y="${H - 9}" width="68" height="9" fill="${s}"/>`;
+  const collar = pg('100,54 80,37 73,56', l) + pg('100,54 120,37 127,56', l) + ln('M100 54 L80 37 L73 56Z', 1.4) + ln('M100 54 L120 37 L127 56Z', 1.4);
+  const backBits = ln('M63 64 Q100 74 137 64', 1.6) + `<rect x="94" y="45" width="12" height="8" rx="1.5" fill="${l}"/>`;
+  let g = '';
+
+  if (view === 'label') {
+    const txt = (o.brand || 'Relore').toUpperCase();
+    const fs = txt.length > 13 ? 11 : txt.length > 9 ? 13 : 16;
+    g = `<rect width="200" height="220" fill="${m}"/>` +
+      ln('M0 52 H200', 1.6) + ln('M0 176 H200', 1.6) +
+      `<rect x="36" y="64" width="128" height="96" rx="4" fill="#FBF8F3"/>` +
+      `<path d="M44 73 H156" stroke="#8A1538" stroke-width="1.8" stroke-dasharray="5 4" fill="none"/>` +
+      `<text x="100" y="104" text-anchor="middle" font-family="Jost, Arial, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="1.5" fill="#221E20">${esc(txt)}</text>` +
+      `<text x="100" y="124" text-anchor="middle" font-family="Jost, Arial, sans-serif" font-size="12" fill="#5C5658">SIZE ${esc(String(o.size || 'M').toUpperCase())}</text>` +
+      `<g fill="none" stroke="#221E20" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">` +
+      `<path d="M62 138 l3 10 h10 l3 -10 M62 141 q4 -3 8 0 t8 0"/><path d="M92 149 l7 -12 l7 12z"/><rect x="118" y="137" width="12" height="12"/><circle cx="124" cy="143" r="3.6"/><path d="M142 148 h14 v-5 q0 -5 -6 -5 h-5z"/></g>`;
+    return `<svg class="art" viewBox="0 0 200 220" role="img" aria-label="Clothing label: ${esc(o.brand || '')}, size ${esc(o.size || '')}">${g}</svg>`;
+  }
+  if (view === 'defects') {
+    const ring = pal === 'maroon' ? '#FFFFFF' : '#8A1538';
+    g = `<circle cx="100" cy="108" r="74" fill="${m}"/>` + ln('M40 80 Q100 96 160 80', 1.6) + ln('M30 120 Q100 136 170 120', 1.6) + ln('M100 36 V180', 1.3);
+    if (o.defect) {
+      g += `<ellipse cx="122" cy="102" rx="7" ry="4" transform="rotate(-24 122 102)" fill="${s}"/><circle cx="122" cy="102" r="19" fill="none" stroke="${ring}" stroke-width="2.2" stroke-dasharray="5 4"/>`;
+    } else {
+      g += `<circle cx="100" cy="108" r="24" fill="#FFFFFF"/><path d="M89 108 l8 8 l15 -16" fill="none" stroke="#3E6B4F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+    return `<svg class="art" viewBox="0 0 200 220" role="img" aria-label="${o.defect ? 'Close-up of the defect: ' + esc(o.defect) : 'Close-up of the fabric. The seller reports no visible defects'}">${g}</svg>`;
+  }
+
+  switch (kind) {
+    case 'shirt':
+      g = sil(longTop(168)) + seams + cuffs;
+      g += back ? backBits : neckIn + collar + ln('M100 54 V168', 1.6) + dots([[100, 76], [100, 100], [100, 124], [100, 148]]) + `<rect x="111" y="84" width="15" height="17" rx="1.5" fill="none" stroke="${s}" stroke-width="1.6"/>`;
+      break;
+    case 'jacket':
+      g = sil(longTop(150)) + seams + cuffs + hem(150);
+      g += back ? backBits + ln('M84 70 V141', 1.4) + ln('M116 70 V141', 1.4)
+        : neckIn + collar + ln('M100 54 V141', 1.8) + dots([[100, 70], [100, 90], [100, 110], [100, 130]]) + pg('73,84 92,84 92,94 82.5,99 73,94', l) + pg('108,84 127,84 127,94 117.5,99 108,94', l) + ln('M82.5 100 V141', 1.4) + ln('M117.5 100 V141', 1.4);
+      break;
+    case 'hoodie':
+      g = (back ? '' : `<path d="M77 44 Q100 4 123 44 Q100 30 77 44Z" fill="${s}" stroke="${s}" stroke-width="4" stroke-linejoin="round"/>`) + sil(longTop(158)) + seams + cuffs + hem(158);
+      g += back ? `<path d="M80 40 Q100 78 120 40 Q100 34 80 40Z" fill="${s}"/>` : neckIn + ln('M93 52 V76', 2, l) + ln('M107 52 V76', 2, l) + ln('M79 149 L84 124 H116 L121 149', 1.8);
+      break;
+    case 'jumper':
+    case 'cardigan':
+      g = sil(longTop(160)) + seams + cuffs + hem(160) + `<rect x="67" y="98" width="66" height="9" fill="${kind === 'jumper' ? d : l}" opacity="${kind === 'jumper' ? 1 : .9}"/>`;
+      if (back) g += backBits;
+      else if (kind === 'cardigan') g += `<path d="M84 40 Q100 56 116 40 L100 88Z" fill="#FBF8F3"/>` + ln('M84 40 L100 88 L116 40', 2.2) + ln('M100 88 V151', 1.8) + dots([[104, 100], [104, 120], [104, 140]], s);
+      else g += neckIn + ln('M82 40 Q100 54 118 40', 4);
+      break;
+    case 'polo':
+      g = sil(shortTop(162)) + pg('32,88 52,100 55,93 36,81') + pg('168,88 148,100 145,93 164,81');
+      g += back ? backBits : neckIn + collar + ln('M100 54 V84', 1.8) + dots([[100, 64], [100, 76]]);
+      break;
+    case 'blazer':
+    case 'coat': {
+      const H = kind === 'coat' ? 198 : 156;
+      g = sil(longTop(H)) + seams;
+      if (back) g += backBits + ln(`M100 ${H - 46} V${H}`, 1.6);
+      else {
+        g += `<path d="M84 40 Q100 54 116 40 L100 98Z" fill="#FBF8F3"/>` + pg('100,98 84,40 73,52 86,66 80,73', l) + pg('100,98 116,40 127,52 114,66 120,73', l) +
+          ln('M100 98 L84 40 L73 52 L86 66 L80 73Z', 1.4) + ln('M100 98 L116 40 L127 52 L114 66 L120 73Z', 1.4) + ln(`M100 98 V${H}`, 1.6);
+        g += kind === 'coat'
+          ? `<rect x="66" y="116" width="68" height="9" fill="${s}"/><rect x="95" y="114" width="12" height="13" rx="2" fill="none" stroke="${d}" stroke-width="1.8"/>` + dots([[92, 142], [108, 142], [92, 164], [108, 164]]) + ln('M72 150 V172', 1.6) + ln('M128 150 V172', 1.6)
+          : dots([[105, 112], [105, 130]]) + ln('M72 132 H91', 1.8) + ln('M111 132 H128', 1.8) + ln('M112 80 H126', 1.8);
+      }
+      break;
+    }
+    case 'dress':
+      g = sil(`M82 36 L68 44 L56 72 L70 80 L77 66 L79 98 L50 192 L150 192 L121 98 L123 66 L130 80 L144 72 L132 44 L118 36 Q100 ${back ? 40 : 52} 82 36Z`);
+      g += (back ? ln('M100 40 V98', 1.4) : `<path d="M82 36 Q100 52 118 36 Q100 42 82 36Z" fill="${s}"/>`) + ln('M79 98 H121', 3) + ln('M90 102 L78 192', 1.3) + ln('M100 102 V192', 1.3) + ln('M110 102 L122 192', 1.3);
+      break;
+    case 'skirt':
+      g = sil('M72 46 H128 L154 184 H46Z') + `<rect x="72" y="46" width="56" height="10" fill="${s}"/>` + ln('M84 58 L70 184', 1.4) + ln('M94 58 L88 184', 1.4) + ln('M106 58 L112 184', 1.4) + ln('M116 58 L130 184', 1.4);
+      break;
+    case 'abaya':
+      g = sil(`M84 30 L64 38 L20 150 L50 162 L70 108 L58 204 L142 204 L130 108 L150 162 L180 150 L136 38 L116 30 Q100 ${back ? 34 : 44} 84 30Z`);
+      g += pg('20,150 50,162 55,149 25,137', l) + pg('180,150 150,162 145,149 175,137', l) + dots([[31, 147], [40, 151], [169, 147], [160, 151]], d, 2) +
+        ln('M70 108 L66 70', 1.5) + ln('M130 108 L134 70', 1.5);
+      g += back ? ln('M66 58 Q100 68 134 58', 1.5) : `<path d="M84 30 Q100 44 116 30 Q100 36 84 30Z" fill="${s}"/>` + ln('M84 30 Q100 44 116 30', 2.6, l) + ln('M100 44 V204', 1.5, l);
+      break;
+    case 'thobe':
+      g = sil(`M86 28 L64 36 L36 150 L56 156 L72 100 L64 204 L136 204 L128 100 L144 156 L164 150 L136 36 L114 28 Q100 ${back ? 30 : 38} 86 28Z`);
+      g += pg('36,150 56,156 58,148 38,142') + pg('164,150 144,156 142,148 162,142') + ln('M72 100 L69 62', 1.5) + ln('M128 100 L131 62', 1.5);
+      g += back ? ln('M66 54 Q100 63 134 54', 1.5) : `<path d="M86 28 Q100 38 114 28 L112 21 Q100 29 88 21Z" fill="${s}" stroke="${s}" stroke-width="1.5" stroke-linejoin="round"/>` + ln('M100 38 V98', 1.6) + dots([[100, 50], [100, 66], [100, 82]], d, 2.3) + `<rect x="110" y="72" width="14" height="16" rx="1.5" fill="none" stroke="${s}" stroke-width="1.5"/>`;
+      break;
+    case 'trousers':
+      g = sil('M68 30 L132 30 L142 196 L110 196 L100 84 L90 196 L58 196Z') + `<rect x="68" y="30" width="64" height="10" fill="${s}"/>`;
+      g += back ? `<rect x="74" y="50" width="18" height="18" rx="2" fill="none" stroke="${s}" stroke-width="1.6"/><rect x="108" y="50" width="18" height="18" rx="2" fill="none" stroke="${s}" stroke-width="1.6"/>` + ln('M100 40 V84', 1.4)
+        : ln('M100 40 V70', 1.6) + ln('M74 41 Q76 57 66 62', 1.6) + ln('M126 41 Q124 57 134 62', 1.6) + dots([[100, 35]], d, 2.4);
+      g += ln('M59 188 H91', 1.4) + ln('M109 188 H141', 1.4);
+      break;
+    case 'dungarees':
+      g = (back ? ln('M84 46 L122 16', 8, m) + ln('M116 46 L78 16', 8, m) : ln('M83 46 L73 16', 8, m) + ln('M117 46 L127 16', 8, m)) +
+        sil('M64 80 L136 80 L142 198 L110 198 L100 120 L90 198 L58 198Z') + sil('M80 44 H120 V82 H80Z') + ln('M64 82 H136', 2);
+      g += back ? `<rect x="72" y="92" width="18" height="18" rx="2" fill="none" stroke="${s}" stroke-width="1.6"/><rect x="110" y="92" width="18" height="18" rx="2" fill="none" stroke="${s}" stroke-width="1.6"/>`
+        : `<rect x="90" y="54" width="20" height="15" rx="2" fill="none" stroke="${s}" stroke-width="1.6"/>` + dots([[84, 48], [116, 48]]) + ln('M72 84 Q74 98 65 102', 1.6) + ln('M128 84 Q126 98 135 102', 1.6);
+      g += pg('58,198 90,198 90.6,190 58.6,190') + pg('110,198 142,198 141.4,190 109.4,190');
+      break;
+  }
+  const names = { shirt: 'shirt', jacket: 'jacket', hoodie: 'hooded top', jumper: 'jumper', cardigan: 'cardigan', polo: 'polo shirt', blazer: 'blazer', coat: 'coat', dress: 'dress', skirt: 'skirt', abaya: 'abaya', thobe: 'thobe', trousers: 'trousers', dungarees: 'dungarees' };
+  return `<svg class="art" viewBox="0 0 200 220" role="img" aria-label="Illustration of a ${names[kind] || 'garment'}, ${back ? 'back' : 'front'} view"><ellipse cx="100" cy="211" rx="56" ry="4" fill="#221E20" opacity=".07"/>${g}</svg>`;
+}
+const tile = (it, view = 'front', cls = '') => `<div class="tile ${it.bg} ${cls}">${art(it.art, it.pal, view, it)}</div>`;
+
+const I = {
+  home: '<path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>',
+  sell: '<path d="M3.5 12.6V5a1.5 1.5 0 0 1 1.5-1.5h7.6L21 12l-9 9z"/><circle cx="8.2" cy="8.2" r="1.4"/>',
+  orders: '<path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.500z"/><path d="M4 8.500 12 13l8-4.500M12 13v7"/>',
+  profile: '<circle cx="12" cy="8.500" r="3.800"/><path d="M4.500 20.500c.8-4 3.800-6 7.500-6s6.700 2 7.500 6"/>',
+  search: '<circle cx="11" cy="11" r="6.500"/><path d="m16 16 4.500 4.500"/>',
+  back: '<path d="m14.500 5.500-6.500 6.500 6.500 6.500"/>',
+  next: '<path d="m9.500 5.500 6.500 6.500-6.500 6.500"/>',
+  down: '<path d="m6 9 6 6 6-6"/>',
+  chat: '<path d="M5 5h14a1.500 1.500 0 0 1 1.500 1.500v9A1.500 1.500 0 0 1 19 17h-6l-5 4v-4H5a1.500 1.500 0 0 1-1.500-1.500v-9A1.500 1.500 0 0 1 5 5z"/>',
+  check: '<path d="m5 12.500 4.500 4.500L19 7.500"/>',
+  star: '<path d="m12 3 2.700 5.700 6.300.8-4.600 4.300 1.200 6.200-5.600-3.100-5.600 3.100 1.200-6.200L3 9.500l6.300-.8z"/>',
+  pin: '<path d="M12 21s6.500-5.600 6.500-11A6.500 6.500 0 0 0 5.500 10c0 5.400 6.500 11 6.500 11z"/><circle cx="12" cy="10" r="2.300"/>',
+  truck: '<path d="M2.500 6.500h11v9.500h-11zM13.500 10h4l3 3v3h-7z"/><circle cx="7" cy="17.500" r="1.800"/><circle cx="17" cy="17.500" r="1.800"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  shield: '<path d="M12 3.500 5 6v5.500c0 4.300 2.900 7.400 7 9 4.100-1.600 7-4.700 7-9V6z"/><path d="m9 12 2.200 2.200L15 10.300"/>',
+  alert: '<path d="M12 4 2.800 19.500h18.400z"/><path d="M12 10v4.500M12 17.300v.2"/>',
+  help: '<circle cx="12" cy="12" r="8.500"/><path d="M9.600 9.500a2.500 2.500 0 1 1 3.600 2.200c-.8.500-1.200 1-1.200 2M12 16.800v.2"/>',
+  send: '<path d="M4 12 20 4.500 15 20l-3.500-6.500z"/><path d="m11.500 13.500 4-4.500"/>',
+  team: '<rect x="4" y="4.500" width="16" height="15" rx="2"/><path d="m8 10 1.800 1.800L13 8.500M8 15.500h8M15 10.500h1"/>',
+  camera: '<path d="M4 8h3.200l1.500-2.500h6.600L16.800 8H20v11H4z"/><circle cx="12" cy="13" r="3.500"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  social: '<circle cx="12" cy="12" r="3.600"/><path d="M15.600 8.400v4.800c0 1.500 1 2.300 2.300 2.300 1.700 0 2.600-1.600 2.600-3.500a8.500 8.500 0 1 0-3.300 6.700"/>',
+  gFront: '<path d="M9 4.500 4.500 6.500 2.500 11l3 1.300L7 10.500V20h10v-9.500l1.500 1.800 3-1.300-2-4.500L15 4.500c-1 1.700-5 1.700-6 0z"/>',
+  gBack: '<path d="M9 4.500 4.500 6.500 2.500 11l3 1.300L7 10.500V20h10v-9.500l1.500 1.800 3-1.300-2-4.500L15 4.500c-1 .7-5 .7-6 0z"/><path d="M10.800 7.300h2.400v1.700h-2.400z"/>',
+  gLabel: '<rect x="5" y="4.500" width="14" height="15" rx="1.500"/><path d="M7.500 7.300h9" stroke-dasharray="1.600 1.600"/><path d="M8.500 11.500h7M9.500 14.500h5"/>',
+  gDefect: '<circle cx="10.500" cy="10.500" r="6"/><path d="m15 15 5.500 5.500M8.800 10.800l1.400 1.400 2.300-2.800"/>'
+};
+const ic = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${I[name]}</svg>`;
+
+/* ====================================================================
+   4. HELPERS
+   ==================================================================== */
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const byId = id => state.listings.find(l => l.id === id);
+const firstAvailable = () => state.listings.find(l => !l.sold) || state.listings[0];
+const addr = id => ADDRESSES.find(a => a.id === id);
+const timeNow = () => 'Today, ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+const tbc = () => `<span class="tbc">${esc(POLICY_TBC)}</span>`;
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast');
+  t.innerHTML = ic('check', 'sm') + `<span>${esc(msg)}</span>`;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+const topbar = (title, backTo, opts = {}) => `
+  <header class="bar ${opts.cls || ''}">
+    <button class="iconbtn" type="button" data-go="${backTo}" aria-label="Back">${ic('back')}</button>
+    <h1>${esc(title)}${opts.sub ? `<span class="sub">${esc(opts.sub)}</span>` : ''}</h1>
+    ${opts.right || ''}
+  </header>`;
+
+const policyBlock = () => `
+  <div class="note-strip">${ic('shield')}
+    <div><p>${esc(POLICY.buyer)}</p>
+    <p class="small" style="margin-top:6px">${esc(POLICY.returnCostLabel)}: ${tbc()}</p>
+    <p class="small muted" style="margin-top:6px">${esc(POLICY.legal)}</p></div>
+  </div>`;
+
+/* ====================================================================
+   5. SCREENS
+   ==================================================================== */
+const screens = {};
+
+/* 1. Splash / welcome ------------------------------------------------ */
+screens.splash = () => ({
+  tabs: false, tone: 'sand',
+  html: `
+  <div class="splash">
+    <div class="rail" aria-hidden="true">
+      <div class="line"></div>
+      <div class="tag t1"><div class="tile deep">${art('jacket', 'slate')}</div><b>QAR 120</b></div>
+      <div class="tag t2"><div class="tile wash">${art('abaya', 'ink')}</div><b>QAR 180</b></div>
+      <div class="tag t3"><div class="tile deep">${art('polo', 'maroon')}</div><b>QAR 150</b></div>
+    </div>
+    <img class="logo" src="${LOGO.colour}" alt="Relore">
+    <p class="tagline">${esc(BRAND.tagline)}</p>
+    <ul class="points">
+      <li>${ic('shield')}<span>Every listing reviewed by hand</span></li>
+      <li>${ic('truck')}<span>Collected and delivered by Relore drivers</span></li>
+      <li>${ic('sell')}<span>Sellers receive ${pct(1 - FEES.commissionRate)} of the sale price</span></li>
+    </ul>
+    <div class="cta">
+      <button class="btn btn-primary block" type="button" data-go="home">Start browsing</button>
+      <button class="btn btn-secondary block" type="button" data-go="sell">Sell your clothing</button>
+    </div>
+    <p class="foot">A managed marketplace for pre-owned clothing in Qatar</p>
+  </div>`
+});
+
+/* 2. Home / browse --------------------------------------------------- */
+function filtered() {
+  const { q, cat, size } = state.filters, needle = q.trim().toLowerCase();
+  return state.listings.filter(l => !l.sold &&
+    (cat === 'all' || l.cat === cat) &&
+    (size === 'all' || l.sg === size) &&
+    (!needle || [l.title, l.brand, CAT_NAME[l.cat], l.area].join(' ').toLowerCase().includes(needle)));
+}
+function gridHtml() {
+  const list = filtered();
+  if (!list.length) return `<div class="empty"><h2>No listings match yet</h2><p>Try another category or size, or clear your search.</p><button class="btn btn-secondary sm" type="button" data-act="clear-filters">Clear filters</button></div>`;
+  return list.map(l => `
+    <button class="card" type="button" data-go="item/${l.id}" aria-label="${esc(l.title)}, ${esc(l.brand)}, size ${esc(l.size)}, ${qar(l.price)}, reviewed">
+      <div class="tile ${l.bg}">${art(l.art, l.pal, 'front', l)}<span class="sewn">${ic('check', 'xs')}Reviewed</span></div>
+      <span class="name">${esc(l.title)}</span>
+      <span class="meta">${esc(l.brand)} · Size ${esc(l.size)}</span>
+      <span class="price"><b class="num">${qar(l.price)}</b><span>${esc(l.area)}</span></span>
+    </button>`).join('');
+}
+function countText() { const n = filtered().length; return `${n} reviewed listing${n === 1 ? '' : 's'}`; }
+function refreshGrid() { $('#grid').innerHTML = gridHtml(); $('#count').textContent = countText(); }
+
+screens.home = () => ({
+  tabs: true, tone: 'sand',
+  html: `
+  <header class="bar bar-home">
+    <img class="logo" src="${LOGO.colour}" alt="Relore">
+    <button class="iconbtn" type="button" data-go="profile" aria-label="Help and support">${ic('help')}</button>
+  </header>
+  <div class="scroll">
+    <div class="search">
+      ${ic('search')}
+      <label class="sr" for="q">Search listings</label>
+      <input class="input" id="q" type="search" placeholder="Search items, brands or areas" value="${esc(state.filters.q)}" autocomplete="off">
+    </div>
+    <div class="chips" role="group" aria-label="Category">
+      ${CATEGORIES.map(([k, n]) => `<button class="chip" type="button" data-act="cat" data-v="${k}" aria-pressed="${state.filters.cat === k}">${n}</button>`).join('')}
+    </div>
+    <div class="filter-row">
+      <span class="count" id="count" aria-live="polite">${countText()}</span>
+      <label class="sr" for="size">Size</label>
+      <select class="select" id="size">${SIZE_FILTERS.map(([k, n]) => `<option value="${k}" ${state.filters.size === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
+    </div>
+    <div class="note-strip plain promise">${ic('shield')}<p>The Relore team reviews every listing by hand before it goes live.</p></div>
+    <div class="grid" id="grid">${gridHtml()}</div>
+  </div>`
+});
+
+/* 3. Item details ---------------------------------------------------- */
+screens.item = id => {
+  const it = byId(id) || firstAvailable();
+  const km = roadKm(it.area, state.checkout.addr), a = addr(state.checkout.addr);
+  return {
+    tabs: false, tone: 'sand',
+    html: topbar('Item details', 'home') + `
+    <div class="scroll">
+      <div class="carousel" id="carousel" tabindex="0" aria-label="Listing photos: front, back, label and defects">
+        ${SHOTS.map(([v, n]) => `<div class="slide ${v === 'front' || v === 'back' ? it.bg : 'deep'}" data-shot="${v}" aria-label="${n}">${art(it.art, it.pal, v, it)}</div>`).join('')}
+      </div>
+      <div class="shots" role="group" aria-label="Choose photo">
+        ${SHOTS.map(([v, n], i) => `<button type="button" data-act="shot" data-v="${i}" aria-pressed="${i === 0}">${n}</button>`).join('')}
+      </div>
+      <div class="pad">
+        <span class="sewn lg">${ic('check', 'xs')}Reviewed by Relore</span>
+        <div class="item-head" style="margin-top:12px">
+          <h2>${esc(it.title)}</h2>
+          <span class="price num">${qar(it.price)}</span>
+        </div>
+        <p class="muted" style="margin-top:2px">${esc(CAT_NAME[it.cat])}</p>
+        <dl class="specs">
+          <div><dt>Size</dt><dd>${esc(it.size)}</dd></div>
+          <div><dt>Brand</dt><dd>${esc(it.brand)}</dd></div>
+          <div><dt>Condition</dt><dd>${esc(it.cond)}</dd></div>
+          <div><dt>Area</dt><dd>${esc(it.area)}</dd></div>
+          <div class="wide"><dt>Measurements</dt><dd>${esc(it.meas)}</dd></div>
+          <div class="wide"><dt>Visible defects</dt><dd>${it.defect ? esc(it.defect) : 'None reported by the seller'}</dd></div>
+        </dl>
+
+        <h3 class="section-title">Seller</h3>
+        <div class="panel seller">
+          <span class="avatar" aria-hidden="true">${esc(it.seller.name[0])}</span>
+          <div class="who"><b>${esc(it.seller.name)}</b>
+            <span class="rating">${ic('star', 'sm fill')}<span class="num">${it.seller.rating.toFixed(1)}</span> seller rating · ${it.seller.sales} sales</span>
+          </div>
+        </div>
+
+        <h3 class="section-title">Delivery</h3>
+        <div class="panel">
+          <div class="mini">${ic('truck')}<div class="t"><b>A Relore driver collects and delivers</b><span>To ${esc(a.label)}, ${esc(a.area)}: about ${km} km, <span class="num">${qar(deliveryFee(km), 2)}</span></span></div></div>
+        </div>
+        <div style="margin-top:12px">${policyBlock()}</div>
+      </div>
+    </div>
+    <div class="actionbar">
+      <button class="btn btn-secondary chatbtn" type="button" data-go="chat/${it.id}">${ic('chat', 'sm')}Chat about this item</button>
+      ${it.sold ? `<button class="btn btn-primary" type="button" data-go="orders">Sold: view order</button>` : `<button class="btn btn-primary" type="button" data-go="checkout/${it.id}">Buy now</button>`}
+    </div>`
+  };
+};
+
+/* 4. Chat ------------------------------------------------------------ */
+function chatFor(it) {
+  if (!state.chats[it.id]) {
+    const word = it.title.split(',')[0].toLowerCase();
+    state.chats[it.id] = [
+      { who: 'me', text: `Hello, is the ${word} still available? Is the fit true to size?`, t: '10:02' },
+      { who: 'them', text: `Hello! Yes, it is. The size is ${it.size} and the measurements are in the listing: ${it.meas.charAt(0).toLowerCase() + it.meas.slice(1)}.`, t: '10:05' },
+      { who: 'me', text: it.defect ? 'Thank you. Is the defect noticeable when worn?' : 'Thank you. Has it been worn much?', t: '10:06' },
+      { who: 'them', text: it.defect ? `Only up close. It is the one in the fourth photo: ${it.defect.charAt(0).toLowerCase() + it.defect.slice(1)}.` : 'Only a few times. There are no visible defects, as the fourth photo shows.', t: '10:09' },
+      { who: 'me', text: 'Great, I will order it today.', t: '10:10' }
+    ];
+  }
+  return state.chats[it.id];
+}
+const threadHtml = it => `
+  <p class="sys">Use this chat for questions about the item. Payment, collection and delivery are handled by Relore.</p>
+  ${chatFor(it).map(m => `<div class="msg ${m.who}"><span class="sr">${m.who === 'me' ? 'You' : esc(it.seller.name)}: </span>${esc(m.text)}<small>${esc(m.t)}</small></div>`).join('')}`;
+
+screens.chat = id => {
+  const it = byId(id) || firstAvailable();
+  return {
+    tabs: false, tone: 'white',
+    html: topbar(it.seller.name, 'item/' + it.id, { cls: 'white', sub: 'Seller in ' + it.area }) + `
+    <div class="chat-item">
+      <div class="thumb">${tile(it)}</div>
+      <div class="t">${esc(it.title)}<span class="num">${qar(it.price)} · Size ${esc(it.size)}</span></div>
+      ${it.sold ? '' : `<button class="btn btn-primary sm" type="button" data-go="checkout/${it.id}" style="flex:none">Buy now</button>`}
+    </div>
+    <div class="scroll" id="threadScroll"><div class="thread" id="thread">${threadHtml(it)}</div></div>
+    <form class="composer" id="composer" data-id="${it.id}">
+      <label class="sr" for="msg">Message to the seller</label>
+      <input class="input" id="msg" type="text" placeholder="Ask about this item" autocomplete="off">
+      <button class="send" type="submit" aria-label="Send message">${ic('send')}</button>
+    </form>`
+  };
+};
+
+/* 5. Checkout -------------------------------------------------------- */
+const FEE_PAY = {
+  card: { name: 'Card', inline: 'card' },
+  applepay: { name: 'Apple Pay', inline: 'Apple Pay' },
+  fawran: { name: 'Fawran', inline: 'Fawran', note: 'Instant transfer from your bank' }
+};
+function checkoutBody(it) {
+  const c = state.checkout, km = roadKm(it.area, c.addr), a = addr(c.addr), t = orderTotals(it.price, km, c.itemPay);
+  return `
+    <div class="panel mini">
+      <div class="thumb">${tile(it)}</div>
+      <div class="t"><b>${esc(it.title)}</b><span>${esc(it.brand)} · Size ${esc(it.size)}</span></div>
+      <span class="p num">${qar(it.price, 2)}</span>
+    </div>
+
+    <h2 class="section-title">Deliver to</h2>
+    <div class="choice" role="radiogroup" aria-label="Delivery address">
+      ${ADDRESSES.map(x => `<label><input type="radio" name="addr" value="${x.id}" ${c.addr === x.id ? 'checked' : ''}><span class="dot"></span><span><span class="t">${esc(x.label)}</span><span class="d">${esc(x.area)}</span></span><span class="end num">${roadKm(it.area, x.id)} km</span></label>`).join('')}
+    </div>
+
+    <h2 class="section-title">Delivery fee</h2>
+    <div class="fee" id="feeBox">
+      <div class="route">${ic('pin', 'sm')}<b>${esc(it.area)}</b><span class="dash"></span>${ic('pin', 'sm')}<b>${esc(a.area)}</b></div>
+      <p class="km num" id="feeKm">${km} km by road, from the seller\u2019s address to yours</p>
+      <div class="sum">
+        <span class="formula num" id="feeFormula">${qar(FEES.deliveryBase)} + ${km} km × ${qar(FEES.deliveryPerKm, 2)}</span>
+        <span class="result num" id="feeResult">${qar(t.delivery, 2)}</span>
+      </div>
+    </div>
+    <p class="small muted" style="margin-top:8px">A Relore driver collects the item from the seller and brings it to you. The distance shown is a sample figure for this prototype.</p>
+
+    <h2 class="section-title">Pay the delivery fee now</h2>
+    <p class="small muted" style="margin:-4px 0 10px">Relore sends a driver to the seller only once the delivery fee is paid, even if you pay for the item in cash.</p>
+    <div class="choice" role="radiogroup" aria-label="Delivery fee payment method">
+      ${Object.entries(FEE_PAY).map(([k, v]) => `<label><input type="radio" name="feePay" value="${k}" ${c.feePay === k ? 'checked' : ''}><span class="dot"></span><span><span class="t">${v.name}</span>${v.note ? `<span class="d">${v.note}</span>` : ''}</span></label>`).join('')}
+    </div>
+
+    <h2 class="section-title">Pay for the item</h2>
+    <div class="choice inline" role="radiogroup" aria-label="Item payment method">
+      <label><input type="radio" name="itemPay" value="card" ${c.itemPay === 'card' ? 'checked' : ''}><span class="dot"></span><span class="t">Card</span></label>
+      <label><input type="radio" name="itemPay" value="cod" ${c.itemPay === 'cod' ? 'checked' : ''}><span class="dot"></span><span class="t">Cash on delivery</span></label>
+    </div>
+
+    <h2 class="section-title">Summary</h2>
+    <div class="panel" style="padding:6px 16px">
+      <dl class="rows">
+        <div><dt>Item price</dt><dd class="num">${qar(t.item, 2)}</dd></div>
+        <div><dt>Delivery fee (${km} km)</dt><dd class="num" id="sumDelivery">${qar(t.delivery, 2)}</dd></div>
+        <div class="total"><dt>Total</dt><dd class="num" id="sumTotal">${qar(t.total, 2)}</dd></div>
+        <div><dt>Pay now by ${FEE_PAY[c.feePay].inline}${c.itemPay === 'card' && c.feePay !== 'card' ? ' and card' : ''}</dt><dd class="num" id="sumNow">${qar(t.payNow, 2)}</dd></div>
+        ${t.payOnDelivery ? `<div><dt>Pay in cash on delivery</dt><dd class="num" id="sumCod">${qar(t.payOnDelivery, 2)}</dd></div>` : ''}
+      </dl>
+    </div>
+
+    <h2 class="section-title">If there is a problem with the item</h2>
+    ${policyBlock()}`;
+}
+screens.checkout = id => {
+  const it = byId(id) || firstAvailable();
+  if (it.sold) return screens.item(it.id);
+  const t = orderTotals(it.price, roadKm(it.area, state.checkout.addr), state.checkout.itemPay);
+  return {
+    tabs: false, tone: 'sand',
+    html: topbar('Checkout', 'item/' + it.id) + `
+    <div class="scroll"><form class="pad" id="checkoutForm" data-id="${it.id}">${checkoutBody(it)}</form></div>
+    <div class="actionbar" style="flex-direction:column;gap:6px">
+      <button class="btn btn-primary block" type="button" data-act="place-order" data-id="${it.id}"><span>Place order · pay <span class="num" id="cta">${qar(t.payNow, 2)}</span> now</span></button>
+      <p class="demo-tag" style="margin:0">Prototype only: no payment is taken.</p>
+    </div>`
+  };
+};
+
+/* 6. Orders and order tracking --------------------------------------- */
+const STEPS = [
+  ['Order placed', 'Relore has confirmed your order with the seller.'],
+  ['Collected from seller', 'A Relore driver has collected the item.'],
+  ['Out for delivery', 'Your Relore driver is on the way to you.'],
+  ['Delivered', 'Check the item at handover before you accept it.']
+];
+const orderThumb = o => `<div class="thumb"><div class="tile ${o.bg}">${art(o.art, o.pal)}</div></div>`;
+
+screens.orders = () => ({
+  tabs: true, tone: 'sand',
+  html: `
+  <header class="bar"><h1 style="padding-left:12px;font-size:22px">My orders</h1></header>
+  <div class="scroll"><div class="pad" style="padding-top:6px">
+    ${state.orders.map(o => `
+      <button class="panel listing" type="button" data-go="track/${o.id}" style="width:100%;border:0;text-align:left;margin-top:12px">
+        ${orderThumb(o)}
+        <span class="t"><b>${esc(o.title)}</b><span class="muted">Order ${o.id} · <span class="num">${qar(orderTotals(o.price, o.km, o.itemPay).total, 2)}</span></span><br>
+          <span class="pill ${o.step === 3 ? 'live' : 'wait'}">${STEPS[o.step][0]}</span></span>
+        ${ic('next')}
+      </button>`).join('')}
+    <p class="small muted" style="margin-top:18px;text-align:center">Looking for something new? <button class="link" type="button" data-go="home">Browse reviewed listings</button></p>
+  </div></div>`
+});
+
+screens.track = id => {
+  const o = state.orders.find(x => x.id === id) || state.orders[0];
+  const t = orderTotals(o.price, o.km, o.itemPay), a = addr(o.addr);
+  return {
+    tabs: true, tone: 'sand',
+    html: topbar('Order ' + o.id, 'orders') + `
+    <div class="scroll"><div class="pad" style="padding-top:6px">
+      <div class="panel mini">
+        ${orderThumb(o)}
+        <div class="t"><b>${esc(o.title)}</b><span>${esc(o.brand)} · Size ${esc(o.size)}</span></div>
+        <span class="p num">${qar(o.price, 2)}</span>
+      </div>
+
+      <h2 class="section-title">${STEPS[o.step][0]}</h2>
+      <div class="panel">
+        <ol class="steps">
+          ${STEPS.map(([n, d], i) => `<li class="${i < o.step || o.step === 3 ? 'done' : i === o.step ? 'now' : 'todo'}"${i === o.step ? ' aria-current="step"' : ''}>
+            <span class="mark">${i < o.step || o.step === 3 ? ic('check', 'sm') : ''}</span>
+            <div><b>${n}</b><span>${i <= o.step ? esc(o.times[i] || '') + ' · ' + d : d}</span></div></li>`).join('')}
+        </ol>
+      </div>
+      ${o.step < 3 ? `<button class="btn btn-quiet block sm" type="button" data-act="advance" data-id="${o.id}" style="margin-top:12px">Demo: move to the next step</button>` : ''}
+
+      <h2 class="section-title">Delivery</h2>
+      <div class="panel" style="padding:6px 16px">
+        <dl class="rows">
+          <div><dt>From</dt><dd>Seller in ${esc(o.area)}</dd></div>
+          <div><dt>To</dt><dd>${esc(a.label)}, ${esc(a.area)}</dd></div>
+          <div><dt>Delivery fee (${o.km} km)</dt><dd class="num">${qar(t.delivery, 2)} paid</dd></div>
+          <div><dt>Item</dt><dd class="num">${o.itemPay === 'cod' ? qar(o.price, 2) + (o.step === 3 ? ' paid in cash' : ' cash on delivery') : qar(o.price, 2) + ' paid by card'}</dd></div>
+        </dl>
+      </div>
+
+      <div style="margin-top:12px">${policyBlock()}</div>
+      ${o.issue ? `<div class="note-strip plain" style="margin-top:12px">${ic('check')}<p><b>Issue reported.</b> Relore support will reply on WhatsApp.</p></div>` : ''}
+      <button class="btn btn-secondary block" type="button" data-go="issue/${o.id}" style="margin-top:14px">${ic('alert', 'sm')}Report an issue</button>
+    </div></div>`
+  };
+};
+
+const evidenceHtml = o => {
+  const n = o.issuePhotos || 0, views = ['defects', 'label', 'front'];
+  return Array.from({ length: n }, (_, i) => `<figure class="ev"><div class="tile deep">${art(o.art, o.pal, views[i], { defect: 'mark', brand: o.brand, size: o.size })}</div><figcaption>Photo ${i + 1}</figcaption></figure>`).join('') +
+    (n < 3 ? `<button class="ev-add" type="button" data-act="issue-photo" data-id="${o.id}">${ic('camera')}<span>Add photo</span></button>` : '');
+};
+const ISSUE_REASONS = ['The item does not match its listing', 'A problem with collection or delivery', 'A problem with payment or my refund', 'Something else'];
+screens.issue = id => {
+  const o = state.orders.find(x => x.id === id) || state.orders[0];
+  return {
+    tabs: false, tone: 'sand',
+    html: topbar('Report an issue', 'track/' + o.id, { sub: 'Order ' + o.id }) + `
+    <div class="scroll"><form class="pad" id="issueForm" data-id="${o.id}" style="padding-top:6px">
+      <h2 class="section-title">What went wrong?</h2>
+      <div class="choice" role="radiogroup" aria-label="Type of issue">
+        ${ISSUE_REASONS.map((r, i) => `<label><input type="radio" name="reason" value="${i}" ${i === 0 ? 'checked' : ''}><span class="dot"></span><span class="t" style="font-weight:500">${r}</span></label>`).join('')}
+      </div>
+      <div class="field"><label for="issueNote">Tell us more (optional)</label>
+        <textarea class="textarea" id="issueNote" rows="3" placeholder="For example: the size on the label is different from the listing"></textarea></div>
+      <div class="field"><span class="label">Photos (optional)</span>
+        <span class="hint">Show the problem, for example the label or a mark. Relore keeps them as evidence.</span>
+        <div class="evidence" id="evidence">${evidenceHtml(o)}</div></div>
+      <div style="margin-top:16px">${policyBlock()}</div>
+      <button class="btn btn-primary block" type="submit" style="margin-top:16px">Send to Relore support</button>
+      <p class="small muted" style="margin-top:12px;text-align:center">Prefer to message us?<br><a class="link" href="${BRAND.whatsappLink}" target="_blank" rel="noopener">WhatsApp Business <span class="num">${esc(BRAND.whatsappDisplay)}</span></a></p>
+    </form></div>`
+  };
+};
+
+/* 7. Sell, steps 1 to 3 ---------------------------------------------- */
+const SLOTS = [
+  ['front', 'Front', 'The whole item, laid flat or on a hanger', 'gFront'],
+  ['back', 'Back', 'The whole item from behind', 'gBack'],
+  ['label', 'Clothing label', 'Brand and size label, in focus', 'gLabel'],
+  ['defects', 'Visible defects', 'A close-up of any marks, pulls or wear', 'gDefect']
+];
+const progress = n => `<div class="progress" role="img" aria-label="Step ${n} of 3">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</div>`;
+const photoCount = () => Object.values(state.draft.photos).filter(Boolean).length;
+
+function slotsHtml() {
+  const d = state.draft;
+  return SLOTS.map(sl => sl[0] === 'defects' && d.noDefects ? ['defects', 'Fabric close-up', 'No visible defects: show the fabric up close', 'gDefect'] : sl).map(([k, n, hint, g]) => d.photos[k]
+    ? `<button class="slot filled ${k === 'label' || k === 'defects' ? 'deep' : ''}" type="button" data-act="slot" data-v="${k}" aria-label="${n} photo added. Tap to remove" style="background:${k === 'label' || k === 'defects' ? 'var(--sand-deep)' : 'var(--maroon-wash)'}">
+        ${art(d.art, d.pal, k, { brand: d.brand, size: d.size, defect: d.defect })}
+        <span class="sewn">${ic('check', 'xs')}${n.replace('Clothing label', 'Label').replace('Visible defects', 'Defects').replace('Fabric close-up', 'Fabric')}</span></button>`
+    : `<button class="slot" type="button" data-act="slot" data-v="${k}" aria-label="Add ${n} photo">
+        ${ic(g, 'guide')}<b>${n}</b><span>${hint}</span><span class="add">${ic('plus', 'xs')}Add photo</span></button>`).join('');
+}
+screens['sell/photos'] = () => ({
+  tabs: false, tone: 'sand',
+  html: topbar('List an item', 'sell', { sub: 'Step 1 of 3: photos' }) + progress(1) + `
+  <div class="scroll"><div class="pad" style="padding-top:12px">
+    <h2 class="section-title">Add the 4 required photos</h2>
+    <p class="muted">Clear photos help the Relore team review your listing and help buyers trust it.</p>
+    <div class="slots" id="slots">${slotsHtml()}</div>
+    <label class="check-row"><input type="checkbox" id="noDefects" ${state.draft.noDefects ? 'checked' : ''}><span>This item has no visible defects. I will add a close-up of the fabric instead.</span></label>
+    <p class="demo-tag" id="photoCount">${photoCount()} of 4 photos added. Prototype: tap a slot to add a sample photo.</p>
+    <p class="error" id="photoError" role="alert" style="margin-top:8px;justify-content:center" ${state.draft.photoError ? '' : 'hidden'}>${ic('alert', 'sm')}Add all 4 required photos to continue.</p>
+  </div></div>
+  <div class="actionbar"><button class="btn btn-primary block" type="button" data-act="photos-next">Next: item details</button></div>`
+});
+
+function payoutHtml(price) {
+  const p = Number(price) > 0 ? Number(price) : 0;
+  return `<dl class="rows">
+    <div><dt>Buyer pays for the item</dt><dd class="num">${qar(p, 2)}</dd></div>
+    <div><dt>Relore commission (${pct(FEES.commissionRate)})</dt><dd class="num">− ${qar(commission(p), 2)}</dd></div>
+    <div class="get"><dt>You receive</dt><dd class="num">${qar(sellerPayout(p), 2)}</dd></div>
+  </dl>`;
+}
+screens['sell/details'] = () => {
+  const d = state.draft, e = d.errors;
+  const fld = (k, label, input, hint) => `<div class="field ${e[k] ? 'invalid' : ''}"><label for="f-${k}">${label}</label>${input}${hint ? `<span class="hint">${hint}</span>` : ''}${e[k] ? `<span class="error" role="alert">${ic('alert', 'sm')}${e[k]}</span>` : ''}</div>`;
+  const txt = (k, extra = '') => `<input class="input" id="f-${k}" name="${k}" value="${esc(d[k])}" ${extra}>`;
+  return {
+    tabs: false, tone: 'sand',
+    html: topbar('List an item', 'sell/photos', { sub: 'Step 2 of 3: details' }) + progress(2) + `
+    <div class="scroll"><form class="pad" id="sellForm" novalidate style="padding-top:2px">
+      ${fld('title', 'Item title', txt('title', 'placeholder="For example: Linen shirt" autocomplete="off"'))}
+      ${fld('cat', 'Category', `<select class="select" id="f-cat" name="cat">${CATEGORIES.slice(1).map(([k, n]) => `<option value="${k}" ${d.cat === k ? 'selected' : ''}>${n}</option>`).join('')}</select>`)}
+      <div class="two">
+        ${fld('brand', 'Brand', txt('brand', 'autocomplete="off"'))}
+        ${fld('size', 'Size', txt('size', 'autocomplete="off"'))}
+      </div>
+      <div class="two">
+        ${fld('chest', 'Chest (cm)', txt('chest', 'inputmode="decimal"'))}
+        ${fld('length', 'Length (cm)', txt('length', 'inputmode="decimal"'))}
+      </div>
+      <p class="hint small muted" style="margin-top:6px">Measure the item laid flat.</p>
+      <div class="field"><span class="label" id="condLabel">Condition</span>
+        <div class="choice pills" role="radiogroup" aria-labelledby="condLabel">
+          ${CONDITIONS.map(c => `<label><input type="radio" name="cond" value="${c}" ${d.cond === c ? 'checked' : ''}>${c}</label>`).join('')}
+        </div></div>
+      ${fld('defect', 'Visible defects (optional)', txt('defect', 'placeholder="For example: small mark on the left cuff" autocomplete="off"'), d.noDefects ? 'You ticked \u201cno visible defects\u201d in step 1.' : '')}
+      ${fld('price', 'Price (QAR)', txt('price', 'inputmode="decimal" autocomplete="off"'))}
+      <div class="payout" id="payout">${payoutHtml(d.price)}</div>
+      ${fld('area', 'Collection area', `<select class="select" id="f-area" name="area">${AREAS.map(a => `<option ${d.area === a ? 'selected' : ''}>${a}</option>`).join('')}</select>`, 'You keep the item until it sells. A Relore driver then collects it from you.')}
+      <div class="note-strip" style="margin-top:18px">${ic('alert')}<p>${esc(POLICY.seller)}</p></div>
+    </form></div>
+    <div class="actionbar"><button class="btn btn-primary block" type="button" data-act="submit-listing">Submit for review</button></div>`
+  };
+};
+
+screens['sell/done'] = () => {
+  const s = state.lastSubmitted || { title: state.draft.title, price: Number(state.draft.price) || 0 };
+  return {
+    tabs: false, tone: 'sand',
+    html: `<header class="bar"><span style="width:12px"></span><h1>List an item<span class="sub">Step 3 of 3: confirmation</span></h1></header>` + progress(3) + `
+    <div class="scroll"><div class="pad">
+      <div class="done-mark">${ic('check')}</div>
+      <h2 style="font-size:23px;font-weight:600;line-height:1.25;text-align:center;margin-top:18px;text-wrap:balance">Submitted — awaiting review by Relore</h2>
+      <p class="muted" style="text-align:center;margin-top:8px">${esc(s.title)} · <span class="num">${qar(s.price, 2)}</span></p>
+
+      <h3 class="section-title">What happens next</h3>
+      <div class="panel" style="padding:4px 16px">
+        <ol class="next">
+          <li><span class="k">1</span><p>The Relore team reviews your photos and details by hand.</p></li>
+          <li><span class="k">2</span><p>Once approved, your listing goes live for buyers.</p></li>
+          <li><span class="k">3</span><p>When it sells, a Relore driver collects the item from you.</p></li>
+          <li><span class="k">4</span><p>You receive <b class="num">${qar(sellerPayout(s.price), 2)}</b>: the sale price less the ${pct(FEES.commissionRate)} commission.</p></li>
+        </ol>
+      </div>
+    </div></div>
+    <div class="actionbar" style="flex-direction:column">
+      <button class="btn btn-primary block" type="button" data-go="sell">View my listings</button>
+      <button class="btn btn-secondary block" type="button" data-act="new-listing">List another item</button>
+    </div>`
+  };
+};
+
+/* 8. Seller dashboard ------------------------------------------------ */
+const STATUS = { wait: 'Awaiting review', live: 'Live', sold: 'Sold', no: 'Not approved' };
+screens.sell = () => {
+  const sold = state.mine.filter(m => m.status === 'sold');
+  const earned = sold.reduce((sum, m) => sum + sellerPayout(m.price), 0);
+  return {
+    tabs: true, tone: 'sand',
+    html: `
+    <header class="bar"><h1 style="padding-left:12px;font-size:22px">Selling</h1></header>
+    <div class="scroll"><div class="pad" style="padding-top:6px">
+      <button class="btn btn-primary block" type="button" data-act="new-listing">${ic('camera', 'sm')}List an item</button>
+
+      <h2 class="section-title">Earnings</h2>
+      <div class="panel">
+        <div class="headline"><span class="muted">Received from ${sold.length} sale${sold.length === 1 ? '' : 's'}</span><b class="num">${qar(earned, 2)}</b></div>
+        <p class="small muted" style="margin-top:4px">Relore keeps a ${pct(FEES.commissionRate)} commission on each sale. You receive ${pct(1 - FEES.commissionRate)}.</p>
+      </div>
+
+      <h2 class="section-title">My listings</h2>
+      ${state.mine.map(m => `
+        <div class="panel">
+          <div class="listing">
+            <div class="thumb"><div class="tile ${m.bg}">${art(m.art, m.pal)}</div></div>
+            <div class="t"><b>${esc(m.title)}</b><span class="muted">${esc(m.brand)} · Size ${esc(m.size)} · <span class="num">${qar(m.price)}</span></span><br>
+              <span class="pill ${m.status}">${STATUS[m.status]}</span>
+              ${m.status === 'no' && m.reason ? `<p class="small muted" style="margin-top:6px">Reason: ${esc(m.reason)}</p>` : ''}
+            </div>
+          </div>
+          ${m.status === 'sold' ? `<div class="earn"><dl class="rows">
+              <div><dt>Sold for</dt><dd class="num">${qar(m.price, 2)}</dd></div>
+              <div><dt>Relore commission (${pct(FEES.commissionRate)})</dt><dd class="num">− ${qar(commission(m.price), 2)}</dd></div>
+              <div class="total"><dt>You receive</dt><dd class="num" style="color:var(--maroon)">${qar(sellerPayout(m.price), 2)}</dd></div>
+            </dl></div>` : ''}
+        </div>`).join('')}
+
+      <h2 class="section-title">Seller standing</h2>
+      <div class="panel"><div class="mini" style="align-items:flex-start">${ic('shield')}<div class="t"><b>0 penalty points</b><span>${esc(POLICY.seller)}</span></div></div></div>
+    </div></div>`
+  };
+};
+
+/* 9. Profile and help ------------------------------------------------ */
+const FAQS = () => [
+  ['What fees does Relore charge?', [
+    `Sellers: Relore deducts a ${pct(FEES.commissionRate)} commission from the sale price, so you receive ${pct(1 - FEES.commissionRate)}. For example, an item sold for ${qar(150)} pays you ${qar(sellerPayout(150))}.`,
+    `Buyers: the delivery fee is ${qar(FEES.deliveryBase)} plus ${qar(FEES.deliveryPerKm, 2)} per km of road distance from the seller’s address to yours. For example, 12 km costs ${qar(deliveryFee(12), 2)}.`]],
+  ['How are listings reviewed?', [
+    'The Relore team reviews every listing by hand before it goes live.',
+    'Each listing needs at least 4 photos (front, back, clothing label and any visible defects), plus the size, measurements, brand and a condition rating.']],
+  ['How does delivery work?', [
+    'The seller keeps the item until it sells. Once you order, a Relore driver collects it from the seller and delivers it to you.',
+    'You pay the delivery fee upfront at checkout by card, Apple Pay or Fawran. Relore sends a driver only once it is paid. You can pay for the item itself by card or cash on delivery.']],
+  ['What if the item is not as described?', [
+    POLICY.buyer + ' ' + POLICY.sellerShort,
+    `${POLICY.returnCostLabel}: ${POLICY.returnCost}`,
+    POLICY.legal]]
+];
+screens.profile = () => ({
+  tabs: true, tone: 'sand',
+  html: `
+  <header class="bar"><h1 style="padding-left:12px;font-size:22px">Profile and help</h1></header>
+  <div class="scroll"><div class="pad" style="padding-top:6px">
+    <div class="panel seller">
+      <span class="avatar" aria-hidden="true">D</span>
+      <div class="who"><b>Demo account</b><span class="muted small">Buyer and seller · Education City</span></div>
+    </div>
+
+    <h2 class="section-title">Support</h2>
+    <div class="panel" style="padding:6px 16px">
+      <a class="menu-row" href="${BRAND.whatsappLink}" target="_blank" rel="noopener">${ic('chat')}<span class="t">WhatsApp Business support<span class="num">${esc(BRAND.whatsappDisplay)} (placeholder number)</span></span>${ic('next', 'sm')}</a>
+      <button class="menu-row" type="button" data-go="home">${ic('search')}<span class="t">A question about an item?<span>Open the listing and use “Chat about this item”.</span></span>${ic('next', 'sm')}</button>
+      <div class="menu-row">${ic('social')}<span class="t">Follow Relore<span>${esc(BRAND.social)} on Instagram and TikTok</span></span></div>
+    </div>
+
+    <h2 class="section-title">Frequently asked questions</h2>
+    <div class="panel faq" style="padding:4px 16px">
+      ${FAQS().map(([q, ps], i) => `<details ${i === 0 ? 'open' : ''}><summary>${q}${ic('down', 'sm')}</summary>${ps.map(p => `<p>${esc(p).replace(esc(POLICY_TBC), tbc())}</p>`).join('')}</details>`).join('')}
+    </div>
+
+    <h2 class="section-title">Relore team</h2>
+    <div class="panel" style="padding:6px 16px">
+      <button class="menu-row" type="button" data-go="admin">${ic('team')}<span class="t">Listing review queue<span>Staff view: approve or reject new listings</span></span>${ic('next', 'sm')}</button>
+    </div>
+
+    <div class="about">
+      <img src="${LOGO.appIcon}" alt="Relore app icon" width="48" height="48">
+      <p><b>Relore</b><br><span class="muted small">Prototype for CMPS307. Sample data only.</span></p>
+    </div>
+  </div></div>`
+});
+
+/* 10. Admin (Relore team) ------------------------------------------- */
+const REJECT_REASONS = ['Photos are unclear or missing', 'Details are incomplete', 'Item is not suitable for Relore'];
+function queueHtml() {
+  if (!state.queue.length) return `<div class="empty" style="padding-top:60px"><div class="done-mark" style="margin-bottom:18px">${ic('check')}</div><h2>The queue is clear</h2><p>Every submitted listing has been reviewed.</p><button class="btn btn-secondary sm" type="button" data-go="home">See live listings</button></div>`;
+  return state.queue.map(q => `
+    <article class="panel review" id="rev-${q.id}">
+      <div class="photos">
+        ${SHOTS.map(([v, n]) => `<figure><div class="tile ${v === 'front' || v === 'back' ? q.bg : 'deep'}">${art(q.art, q.pal, v, q)}</div><figcaption>${n}</figcaption></figure>`).join('')}
+      </div>
+      <h2>${esc(q.title)}</h2>
+      <p class="muted small">${esc(q.seller)} · ${esc(q.area)} · <span class="num">${qar(q.price)}</span></p>
+      <dl class="rows small" style="margin-top:6px">
+        <div><dt>Brand and size</dt><dd>${esc(q.brand)} · ${esc(q.size)}</dd></div>
+        <div><dt>Measurements</dt><dd>${esc(q.meas.replace(' (laid flat)', ''))}</dd></div>
+        <div><dt>Condition</dt><dd>${esc(q.cond)}${q.defect ? ' · ' + esc(q.defect) : ''}</dd></div>
+      </dl>
+      <ul class="checks" aria-label="Listing requirements">
+        ${['4 required photos', 'Size', 'Measurements', 'Brand', 'Condition rating'].map(c => `<li>${ic('check', 'sm')}${c}</li>`).join('')}
+      </ul>
+      ${q.rejecting ? `
+        <div class="choice" role="radiogroup" aria-label="Reason for rejection">
+          ${REJECT_REASONS.map((r, i) => `<label><input type="radio" name="why-${q.id}" value="${i}" ${i === 0 ? 'checked' : ''}><span class="dot"></span><span class="t" style="font-weight:500">${r}</span></label>`).join('')}
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn-secondary sm" type="button" data-act="reject-cancel" data-id="${q.id}">Cancel</button>
+          <button class="btn btn-primary sm" type="button" data-act="reject-confirm" data-id="${q.id}">Confirm rejection</button>
+        </div>` : `
+        <div class="actions">
+          <button class="btn btn-secondary sm" type="button" data-act="reject" data-id="${q.id}">Reject</button>
+          <button class="btn btn-ok sm" type="button" data-act="approve" data-id="${q.id}">${ic('check', 'sm')}Approve</button>
+        </div>`}
+    </article>`).join('');
+}
+screens.admin = () => ({
+  tabs: false, tone: 'ink',
+  html: topbar('Listing review', 'profile', { cls: 'ink on-dark', sub: `Relore team · ${state.queue.length} awaiting review` }) + `
+  <div class="scroll"><div class="pad" id="queue" style="padding-top:14px">${queueHtml()}</div></div>`
+});
+
+/* ====================================================================
+   6. ROUTER
+   ==================================================================== */
+const TAB_OF = { home: 'home', item: 'home', chat: 'home', checkout: 'home', sell: 'sell', orders: 'orders', track: 'orders', issue: 'orders', profile: 'profile', admin: 'profile', splash: '' };
+const TABS = [['home', 'Home', 'home'], ['sell', 'Sell', 'sell'], ['orders', 'Orders', 'orders'], ['profile', 'Profile', 'profile']];
+
+const DEMO = [
+  ['1', 'Splash / welcome', () => 'splash'],
+  ['2', 'Home / browse', () => 'home'],
+  ['3', 'Item details', () => 'item/' + firstAvailable().id],
+  ['4', 'Chat', () => 'chat/' + firstAvailable().id],
+  ['5', 'Checkout', () => 'checkout/' + firstAvailable().id],
+  ['6', 'Order tracking', () => 'track/' + state.orders[0].id],
+  ['7', 'Sell: photos', () => 'sell/photos'],
+  ['', 'Sell: details', () => 'sell/details'],
+  ['', 'Sell: submitted', () => 'sell/done'],
+  ['8', 'Seller dashboard', () => 'sell'],
+  ['9', 'Profile / help', () => 'profile'],
+  ['10', 'Admin: review queue', () => 'admin']
+];
+
+function parse() {
+  const raw = decodeURIComponent(location.hash.replace(/^#\/?/, '')) || 'splash';
+  const parts = raw.split('/');
+  if (parts[0] === 'sell' && parts[1]) return { key: 'sell/' + parts[1], arg: null, base: 'sell', raw };
+  return { key: parts[0], arg: parts[1] || null, base: parts[0], raw };
+}
+function go(route) {
+  if ('#/' + route === location.hash) render(true); else location.hash = '/' + route;
+}
+function render(keepScroll) {
+  const r = parse(), make = screens[r.key] || screens.home;
+  const prevScroll = keepScroll ? ($('#view .scroll') || {}).scrollTop : 0;
+  const s = make(r.arg);
+  const view = $('#view');
+  view.innerHTML = s.html;
+  view.classList.remove('enter');
+  if (!keepScroll) { void view.offsetWidth; view.classList.add('enter'); }
+  $('#app').dataset.tone = s.tone || 'sand';
+  const tb = $('#tabbar');
+  tb.hidden = !s.tabs;
+  const cur = TAB_OF[r.base] || '';
+  tb.innerHTML = TABS.map(([k, n, icon]) => `<button type="button" data-go="${k}" ${cur === k ? 'aria-current="page"' : ''}>${ic(icon)}<span>${n}</span></button>`).join('');
+  $('#toast').style.bottom = s.tabs ? '86px' : (view.querySelector('.actionbar, .composer') ? '96px' : '24px');
+  const sc = $('#view .scroll');
+  if (sc && keepScroll) sc.scrollTop = prevScroll;
+  if (r.key === 'chat') { const ts = $('#threadScroll'); ts.scrollTop = ts.scrollHeight; }
+  if (r.key === 'item') bindCarousel();
+  renderDemo(r.raw);
+  document.title = 'Relore: ' + ((view.querySelector('h1') || {}).firstChild?.textContent?.trim() || 'welcome');
+}
+function renderDemo(raw) {
+  const html = DEMO.map(([n, label, to], i) => {
+    const target = to(), on = raw === target || (raw.split('/')[0] === target.split('/')[0] && !target.startsWith('sell') && raw.split('/')[0] !== 'sell');
+    return `<button type="button" data-demo="${i}" ${on ? 'aria-current="true"' : ''}><span class="n">${n}</span><span>${label}</span></button>`;
+  }).join('');
+  $('#demoSide').innerHTML = html; $('#demoSheet').innerHTML = html;
+}
+function bindCarousel() {
+  const c = $('#carousel'); if (!c) return;
+  let raf;
+  c.addEventListener('scroll', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const i = Math.round(c.scrollLeft / c.clientWidth);
+      $$('.shots button').forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+    });
+  }, { passive: true });
+}
+
+/* ====================================================================
+   7. ACTIONS
+   ==================================================================== */
+const actions = {
+  'demo-open': () => { $('#sheetBack').classList.add('open'); $('#sheetBack .iconbtn').focus(); },
+  'demo-close': () => { $('#sheetBack').classList.remove('open'); },
+  'cat': el => { state.filters.cat = el.dataset.v; $$('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === el))); refreshGrid(); },
+  'clear-filters': () => { state.filters = { q: '', cat: 'all', size: 'all' }; render(); },
+  'shot': el => { const c = $('#carousel'); c.scrollTo({ left: c.clientWidth * Number(el.dataset.v), behavior: 'smooth' }); $$('.shots button').forEach(b => b.setAttribute('aria-pressed', String(b === el))); },
+  'place-order': el => {
+    const it = byId(el.dataset.id), c = state.checkout;
+    const o = { id: 'RL-' + (++state.orderSeq), title: it.title, brand: it.brand, size: it.size, art: it.art, pal: it.pal, bg: it.bg, area: it.area,
+      addr: c.addr, km: roadKm(it.area, c.addr), price: it.price, itemPay: c.itemPay, feePay: c.feePay, step: 0, times: [timeNow()], issue: false };
+    state.orders.unshift(o); it.sold = true;
+    go('track/' + o.id); toast('Order placed. Delivery fee paid.');
+  },
+  'issue-photo': el => {
+    const o = state.orders.find(x => x.id === el.dataset.id);
+    o.issuePhotos = Math.min(3, (o.issuePhotos || 0) + 1);
+    $('#evidence').innerHTML = evidenceHtml(o);
+    ($('#evidence [data-act]') || $('#issueNote')).focus();
+  },
+  'advance': el => {
+    const o = state.orders.find(x => x.id === el.dataset.id);
+    if (o.step < 3) { o.step++; o.times[o.step] = timeNow(); render(true); toast(STEPS[o.step][0]); }
+  },
+  'slot': el => {
+    const d = state.draft, k = el.dataset.v; d.photos[k] = !d.photos[k];
+    if (photoCount() === 4) d.photoError = false;
+    $('#slots').innerHTML = slotsHtml();
+    $('#photoCount').textContent = `${photoCount()} of 4 photos added. Prototype: tap a slot to add a sample photo.`;
+    $('#photoError').hidden = !d.photoError;
+    $(`#slots [data-v="${k}"]`).focus();
+  },
+  'photos-next': () => {
+    if (photoCount() < 4) { state.draft.photoError = true; $('#photoError').hidden = false; $('#photoError').scrollIntoView({ block: 'nearest' }); return; }
+    go('sell/details');
+  },
+  'submit-listing': () => {
+    const d = state.draft, e = {};
+    if (!d.title.trim()) e.title = 'Enter a title for the item.';
+    if (!d.brand.trim()) e.brand = 'Enter the brand.';
+    if (!d.size.trim()) e.size = 'Enter the size.';
+    if (!(Number(d.chest) > 0)) e.chest = 'Enter a number.';
+    if (!(Number(d.length) > 0)) e.length = 'Enter a number.';
+    if (!(Number(d.price) > 0)) e.price = 'Enter a price in QAR, for example 60.';
+    d.errors = e;
+    if (Object.keys(e).length) { render(true); const f = $('.field.invalid'); f.scrollIntoView({ block: 'center' }); $('input, select', f).focus(); return; }
+    if (photoCount() < 4) { d.photoError = true; go('sell/photos'); return; }
+    const price = round2(Number(d.price)), id = 'm' + (state.mineSeq++);
+    const meas = `Chest ${d.chest} cm, length ${d.length} cm (laid flat)`;
+    state.mine.unshift({ id, title: d.title.trim(), brand: d.brand.trim(), size: d.size.trim(), price, status: 'wait', art: d.art, pal: d.pal, bg: d.bg });
+    state.queue.unshift({ id: 'q' + id, mineId: id, title: d.title.trim(), brand: d.brand.trim(), size: d.size.trim(), cond: d.cond, price, area: d.area, cat: d.cat,
+      seller: 'Demo account', meas, defect: d.defect.trim(), art: d.art, pal: d.pal, bg: d.bg, rejecting: false });
+    state.lastSubmitted = { title: d.title.trim(), price };
+    state.draft = freshDraft();
+    go('sell/done');
+  },
+  'new-listing': () => { state.draft = freshDraft(); go('sell/photos'); },
+  'approve': el => {
+    const q = state.queue.find(x => x.id === el.dataset.id);
+    state.queue = state.queue.filter(x => x !== q);
+    const mine = state.mine.find(m => m.id === q.mineId); if (mine) mine.status = 'live';
+    state.listings.unshift({ id: 'new-' + q.id, title: q.title, cat: q.cat, brand: q.brand, size: q.size, sg: ['S', 'M', 'L'].includes(q.size) ? q.size : /year/.test(q.size) ? 'kids' : 'numbered',
+      cond: q.cond, price: q.price, area: q.area, seller: { name: q.seller, rating: 4.7, sales: 1 }, meas: q.meas, defect: q.defect, art: q.art, pal: q.pal, bg: q.bg });
+    render(true); toast('Approved. The listing is now live.');
+  },
+  'reject': el => { state.queue.forEach(x => x.rejecting = x.id === el.dataset.id); render(true); },
+  'reject-cancel': () => { state.queue.forEach(x => x.rejecting = false); render(true); },
+  'reject-confirm': el => {
+    const q = state.queue.find(x => x.id === el.dataset.id);
+    const why = REJECT_REASONS[Number(($(`input[name="why-${q.id}"]:checked`) || { value: 0 }).value)];
+    state.queue = state.queue.filter(x => x !== q);
+    const mine = state.mine.find(m => m.id === q.mineId); if (mine) { mine.status = 'no'; mine.reason = why; }
+    render(true); toast('Rejected. The seller has been told why.');
+  }
+};
+
+document.addEventListener('click', e => {
+  const demo = e.target.closest('[data-demo]');
+  if (demo) { actions['demo-close'](); go(DEMO[Number(demo.dataset.demo)][2]()); return; }
+  const goEl = e.target.closest('[data-go]');
+  if (goEl) { go(goEl.dataset.go); return; }
+  const act = e.target.closest('[data-act]');
+  if (act && actions[act.dataset.act]) { actions[act.dataset.act](act); return; }
+  if (e.target.id === 'sheetBack') actions['demo-close']();
+});
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'q') { state.filters.q = t.value; refreshGrid(); }
+  if (t.form && t.form.id === 'sellForm' && t.name) {
+    state.draft[t.name] = t.value;
+    if (t.name === 'price') $('#payout').innerHTML = payoutHtml(t.value);
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'size') { state.filters.size = t.value; refreshGrid(); }
+  if (t.id === 'noDefects') {
+    state.draft.noDefects = t.checked;
+    if (t.checked) state.draft.defect = '';
+    $('#slots').innerHTML = slotsHtml();
+  }
+  if (t.form && t.form.id === 'checkoutForm' && ['addr', 'feePay', 'itemPay'].includes(t.name)) {
+    state.checkout[t.name] = t.value;
+    const name = t.name, val = t.value;
+    render(true);
+    const again = $(`#checkoutForm input[name="${name}"][value="${val}"]`); if (again) again.focus({ preventScroll: true });
+  }
+  if (t.form && t.form.id === 'sellForm' && t.name) state.draft[t.name] = t.value;
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === 'composer') {
+    const input = $('#msg'), text = input.value.trim(); if (!text) { input.focus(); return; }
+    const it = byId(f.dataset.id);
+    chatFor(it).push({ who: 'me', text, t: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) });
+    $('#thread').innerHTML = threadHtml(it); input.value = '';
+    const ts = $('#threadScroll'); ts.scrollTop = ts.scrollHeight; input.focus();
+  }
+  if (f.id === 'issueForm') {
+    const o = state.orders.find(x => x.id === f.dataset.id); o.issue = true;
+    go('track/' + o.id); toast('Report sent to Relore support.');
+  }
+  if (f.id === 'sellForm') actions['submit-listing']();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') actions['demo-close']();
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+  if (!typing && (e.key === 'm' || e.key === 'M') && !document.documentElement.classList.contains('clean')) {
+    $('#sheetBack').classList.contains('open') ? actions['demo-close']() : actions['demo-open']();
+  }
+});
+window.addEventListener('hashchange', () => render(false));
+
+/* Scale the phone frame to fit the window height on desktop. */
+function fit() {
+  const phone = $('#phone'), wrap = $('#phoneWrap');
+  if (window.innerWidth <= 600) { phone.style.transform = ''; wrap.style.height = ''; return; }
+  const s = Math.min(1, (window.innerHeight - 32) / 868);
+  phone.style.transform = `scale(${s})`;
+  wrap.style.height = 868 * s + 'px';
+}
+window.addEventListener('resize', fit);
+
+/* ?clean=1 hides the demo handle (for screenshots and screen recordings). */
+if (new URLSearchParams(location.search).has('clean')) document.documentElement.classList.add('clean');
+
+$('#facts').innerHTML = `
+  <div><dt>Commission</dt><dd>${pct(FEES.commissionRate)} of the sale price</dd></div>
+  <div><dt>Seller receives</dt><dd>${pct(1 - FEES.commissionRate)}</dd></div>
+  <div><dt>Delivery fee</dt><dd>${qar(FEES.deliveryBase)} + ${qar(FEES.deliveryPerKm, 2)} per km</dd></div>
+  <div><dt>Example: 12 km</dt><dd>${qar(deliveryFee(12), 2)} delivery</dd></div>
+  <div><dt>Example: ${qar(150)} sale</dt><dd>Seller receives ${qar(sellerPayout(150))}</dd></div>
+  <div class="stack"><dt>Cost of returning a declined item</dt><dd>${esc(POLICY_TBC)}</dd></div>`;
+
+/* Exposed for the automated checks in part4-output/tools. */
+window.Relore = { FEES, deliveryFee, commission, sellerPayout, orderTotals, qar, state, go, POLICY_TBC };
+
+fit();
+render(false);
+</script>
+</body>
+</html>
