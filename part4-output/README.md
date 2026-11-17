@@ -69,8 +69,8 @@ I read `Relore-Logo-Guidelines.pdf` (version 1.0) first. Every logo on screen is
 
 | Kit file | Copied to | Used for |
 |---|---|---|
-| `master/relore-horizontal-color.svg` | `prototype/assets/` | Splash screen (236 px wide), Home header (132 px), desktop side panel (196 px). Always on Linen Sand. |
-| `horizontal/relore-horizontal-white.svg` | `prototype/assets/` | Teleprompter header (136 px wide), on Thread Ink. |
+| `master/relore-horizontal-color.svg` | `prototype/assets/` | Splash screen (236 px wide), Home header (132 px), desktop side panel (196 px). Always on Supermoon. |
+| `horizontal/relore-horizontal-white.svg` | `prototype/assets/` | Teleprompter header (136 px wide), on After Hours. |
 | `master/relore-symbol-color.svg` | `prototype/assets/` | Centre of the mind-map (96 px), on white. |
 | `symbol/relore-symbol-app-icon.svg` | `prototype/assets/` | App icon at the bottom of the Profile screen (48 px). |
 | `web-icons/favicon.ico`, `favicon.svg`, `apple-touch-icon.png` | `prototype/assets/` | Browser tab icon and home-screen icon, following `head-snippet.html`. |
@@ -79,10 +79,25 @@ I read `Relore-Logo-Guidelines.pdf` (version 1.0) first. Every logo on screen is
 How the rules are met:
 - **Minimum sizes.** The rimmed wordmark is never below 120 px wide (smallest use: 132 px). The symbol is never below 24 px (smallest use: 48 px). The automated check fails if a logo drops below its minimum or is stretched.
 - **Clear space.** Nothing sits within one button-diameter of the logo. On the mind-map the title starts 120 px from the centre, outside the symbol's clear zone.
-- **Approved pairs only.** Full colour on Linen Sand or white, white on Thread Ink. No logo sits on a tint, a photo or a busy background.
-- **Colours.** Relore Maroon `#8A1538`, Thread Ink `#221E20`, Linen Sand `#F3ECE2` and white, plus lighter and darker tints of those. The only other colours are three muted status colours (green for approved or live, amber for awaiting review, rust for errors).
+- **Logo backgrounds.** Full colour on Supermoon or white, white on After Hours. These are the palette v2 equivalents of the guidelines' approved pairs (full colour on Linen Sand or white, white on Ink). No logo sits on a tint, a photo or a busy background.
+- **Colours (palette v2, 17 November).** Relore Maroon `#8A1538` is kept from the guidelines for the logo's button and every action. The rest of the palette replaces Thread Ink and Linen Sand:
+
+  | Colour | Hex | Used for |
+  |---|---|---|
+  | Relore Maroon (kept) | `#8A1538` | Logo button, buttons, prices, links, active tab |
+  | After Hours | `#38373D` | Text, phone frame, teleprompter background |
+  | Modern Love | `#ECCEC4` | Selected options, policy notes, tile backgrounds |
+  | 36 Hours in Marrakesh | `#C9877B` | Garment illustrations only. Never text or buttons (2.9:1 with white) |
+  | The Patio | `#3D2922` | Dark panels: Relore team header, "measure and decide" branches on the mind-map |
+  | Ryokan Guesthouse | `#DDCAB9` | Tile backgrounds and lines |
+  | Supermoon | `#EEEFEA` | Page and app background |
+  | White | `#FFFFFF` | Cards and panels |
+
+  Body text is 10.2:1 on Supermoon and secondary text (`#57565E`) is 6.3:1, both well above the 4.5:1 minimum. The only other colours are three muted status colours (green for approved or live, amber for awaiting review, rust for errors). To go back to the old palette, the previous values are noted in a comment at the top of `prototype/index.html`.
+
+  The logo files themselves are unchanged. The wordmark letters stay Thread Ink `#221E20`, which is very close to After Hours. **The group's logo guidelines (v1.0) still list the old palette, so they need updating if the group adopts this one.**
 - **Font.** Jost throughout, falling back to Arial.
-- **Images.** No photographs and no people. Garments are flat illustrations drawn in the brand tints.
+- **Images.** No people in any image. Each listing's front view is a real photo of clothing on a hanger or laid flat. All 17 photos are free to use under the Unsplash License and stored in `prototype/assets/photos/`; each original is listed in [`CREDITS.md`](prototype/assets/photos/CREDITS.md). The defects view uses a real fabric close-up, marked with a dashed circle when the seller reports a defect. The back view and the label stay as drawings, so the label always shows the listing's own brand and size. The abaya and thobe are drawn throughout, because no free photo of either garment without a person wearing it could be found. A group member's own photo, laid flat or on a hanger, would fill that gap.
 
 Two notes:
 - `head-snippet.html` uses paths that start with `/`, which only work on a web server. I changed them to `assets/…` so the icons load when the file is opened with a double click. I left out the `site.webmanifest` line for the same reason. Add it back if the prototype is ever hosted.
@@ -105,7 +120,7 @@ Colours also live in one place: the `:root` block at the top of `prototype/index
 
 ## 4. Checks carried out
 
-### Automated (`tools/check-prototype.js`): 96 of 96 passed
+### Automated (`tools/check-prototype.js`): 98 of 98 passed
 
 - **Buyer flow** clicked through: splash → Home → search, category and size filters → item details → photo carousel → chat (message sent) → checkout (address and payment changed, including Fawran) → order placed → tracking advanced to Delivered → issue reported with 3 photos → Orders.
 - **Seller and admin flow** clicked through: dashboard → step 1 (error shown when photos are missing, "no visible defects" option) → step 2 (error shown when the price is missing) → step 3 → dashboard → Profile → FAQs → admin queue → Approve, and Reject with a reason → listing live on Home.

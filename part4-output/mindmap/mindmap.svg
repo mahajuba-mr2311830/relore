@@ -2,78 +2,78 @@
 <title id="mmTitle">Mind-map: Testing Relore’s MVPs</title>
 <desc id="mmDesc">Nine branches: Concierge MVP; Wizard of Oz MVP; Clickable prototype usability tests; Landing page / smoke test; Social media tests; Campus pilot; Surveys and interviews; Metrics to track; Pivot or persevere criteria.</desc>
 <style>@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap'); text { font-family: Jost, Arial, sans-serif; }</style>
-<rect width="1920" height="1080" fill="#F3ECE2"/>
+<rect width="1920" height="1080" fill="#EEEFEA"/>
 <path d="M1029.5 427.8 C1050.6 393.8 1068 134 1116 134" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M1412 134 C1438 134 1426 80 1452 80" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 134 C1438 134 1426 116 1452 116" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 134 C1438 134 1426 152 1452 152" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 134 C1438 134 1426 188 1452 188" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 134 C1438 134 1426 80 1452 80" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 134 C1438 134 1426 116 1452 116" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 134 C1438 134 1426 152 1452 152" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 134 C1438 134 1426 188 1452 188" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <path d="M1062.4 456.7 C1093.5 431.5 1068 335.5 1116 335.5" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M1412 335.5 C1438 335.5 1426 281.5 1452 281.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 335.5 C1438 335.5 1426 317.5 1452 317.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 335.5 C1438 335.5 1426 353.5 1452 353.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 335.5 C1438 335.5 1426 389.5 1452 389.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 335.5 C1438 335.5 1426 281.5 1452 281.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 335.5 C1438 335.5 1426 317.5 1452 317.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 335.5 C1438 335.5 1426 353.5 1452 353.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 335.5 C1438 335.5 1426 389.5 1452 389.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <path d="M1092.0 538.4 C1132.0 537.9 1068 537 1116 537" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M1412 537 C1438 537 1426 483 1452 483" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 537 C1438 537 1426 519 1452 519" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 537 C1438 537 1426 555 1452 555" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 537 C1438 537 1426 591 1452 591" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 537 C1438 537 1426 483 1452 483" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 537 C1438 537 1426 519 1452 519" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 537 C1438 537 1426 555 1452 555" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 537 C1438 537 1426 591 1452 591" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <path d="M1063.6 621.8 C1095.0 646.5 1068 738.5 1116 738.5" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M1412 738.5 C1438 738.5 1426 684.5 1452 684.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 738.5 C1438 738.5 1426 720.5 1452 720.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 738.5 C1438 738.5 1426 756.5 1452 756.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 738.5 C1438 738.5 1426 792.5 1452 792.5" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 738.5 C1438 738.5 1426 684.5 1452 684.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 738.5 C1438 738.5 1426 720.5 1452 720.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 738.5 C1438 738.5 1426 756.5 1452 756.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 738.5 C1438 738.5 1426 792.5 1452 792.5" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <path d="M1030.3 651.7 C1051.6 685.6 1068 940 1116 940" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M1412 940 C1438 940 1426 886 1452 886" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 940 C1438 940 1426 922 1452 922" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 940 C1438 940 1426 958 1452 958" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M1412 940 C1438 940 1426 994 1452 994" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 940 C1438 940 1426 886 1452 886" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 940 C1438 940 1426 922 1452 922" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 940 C1438 940 1426 958 1452 958" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M1412 940 C1438 940 1426 994 1452 994" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <path d="M890.5 427.8 C869.4 393.8 852 134 804 134" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M508 134 C482 134 494 80 468 80" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 134 C482 134 494 116 468 116" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 134 C482 134 494 152 468 152" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 134 C482 134 494 188 468 188" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 134 C482 134 494 80 468 80" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 134 C482 134 494 116 468 116" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 134 C482 134 494 152 468 152" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 134 C482 134 494 188 468 188" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <path d="M846.5 472.6 C812.1 452.2 852 390.6666666666667 804 390.6666666666667" fill="none" stroke="#8A1538" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M508 390.6666666666667 C482 390.6666666666667 494 336.6666666666667 468 336.6666666666667" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 390.6666666666667 C482 390.6666666666667 494 372.6666666666667 468 372.6666666666667" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 390.6666666666667 C482 390.6666666666667 494 408.6666666666667 468 408.6666666666667" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 390.6666666666667 C482 390.6666666666667 494 444.6666666666667 468 444.6666666666667" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M841.8 598.9 C806.0 616.7 852 665.3333333333334 804 665.3333333333334" fill="none" stroke="#221E20" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M508 665.3333333333334 C482 665.3333333333334 494 593.3333333333334 468 593.3333333333334" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 665.3333333333334 C482 665.3333333333334 494 629.3333333333334 468 629.3333333333334" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 665.3333333333334 C482 665.3333333333334 494 665.3333333333334 468 665.3333333333334" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 665.3333333333334 C482 665.3333333333334 494 701.3333333333334 468 701.3333333333334" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 665.3333333333334 C482 665.3333333333334 494 737.3333333333334 468 737.3333333333334" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M889.7 651.7 C868.4 685.6 852 940 804 940" fill="none" stroke="#221E20" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M508 940 C482 940 494 886 468 886" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 940 C482 940 494 922 468 922" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 940 C482 940 494 958 468 958" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
-<path d="M508 940 C482 940 494 994 468 994" fill="none" stroke="#B9A78E" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 390.6666666666667 C482 390.6666666666667 494 336.6666666666667 468 336.6666666666667" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 390.6666666666667 C482 390.6666666666667 494 372.6666666666667 468 372.6666666666667" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 390.6666666666667 C482 390.6666666666667 494 408.6666666666667 468 408.6666666666667" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 390.6666666666667 C482 390.6666666666667 494 444.6666666666667 468 444.6666666666667" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M841.8 598.9 C806.0 616.7 852 665.3333333333334 804 665.3333333333334" fill="none" stroke="#3D2922" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M508 665.3333333333334 C482 665.3333333333334 494 593.3333333333334 468 593.3333333333334" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 665.3333333333334 C482 665.3333333333334 494 629.3333333333334 468 629.3333333333334" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 665.3333333333334 C482 665.3333333333334 494 665.3333333333334 468 665.3333333333334" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 665.3333333333334 C482 665.3333333333334 494 701.3333333333334 468 701.3333333333334" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 665.3333333333334 C482 665.3333333333334 494 737.3333333333334 468 737.3333333333334" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M889.7 651.7 C868.4 685.6 852 940 804 940" fill="none" stroke="#3D2922" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M508 940 C482 940 494 886 468 886" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 940 C482 940 494 922 468 922" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 940 C482 940 494 958 468 958" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
+<path d="M508 940 C482 940 494 994 468 994" fill="none" stroke="#B8A28F" stroke-width="2" stroke-linecap="round"/>
 <g id="branch-1">
 <rect x="1116" y="98" width="296" height="72" rx="18" fill="#8A1538"/>
 <text x="1284" y="134" dy=".35em" text-anchor="middle" font-size="24" font-weight="600" fill="#FFFFFF">Concierge MVP</text>
 <circle cx="1144" cy="134" r="15" fill="#FFFFFF"/><text x="1144" y="134" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">1</text>
 <circle cx="1452" cy="80" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="80" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Orders taken by Instagram and WhatsApp</text>
+<text class="leaf" x="1466" y="80" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Orders taken by Instagram and WhatsApp</text>
 <circle cx="1452" cy="116" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="116" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">The team reviews every listing by hand</text>
+<text class="leaf" x="1466" y="116" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">The team reviews every listing by hand</text>
 <circle cx="1452" cy="152" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="152" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Log every question buyers and sellers ask</text>
+<text class="leaf" x="1466" y="152" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Log every question buyers and sellers ask</text>
 <circle cx="1452" cy="188" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="188" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Tests willingness to pay the delivery fee</text>
+<text class="leaf" x="1466" y="188" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Tests willingness to pay the delivery fee</text>
 </g>
 <g id="branch-2">
 <rect x="1116" y="299.5" width="296" height="72" rx="18" fill="#8A1538"/>
 <text x="1284" y="335.5" dy=".35em" text-anchor="middle" font-size="24" font-weight="600" fill="#FFFFFF">Wizard of Oz MVP</text>
 <circle cx="1144" cy="335.5" r="15" fill="#FFFFFF"/><text x="1144" y="335.5" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">2</text>
 <circle cx="1452" cy="281.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="281.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">The app looks complete to the user</text>
+<text class="leaf" x="1466" y="281.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">The app looks complete to the user</text>
 <circle cx="1452" cy="317.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="317.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Listings reviewed by hand behind the scenes</text>
+<text class="leaf" x="1466" y="317.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Listings reviewed by hand behind the scenes</text>
 <circle cx="1452" cy="353.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="353.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Collection and delivery arranged manually</text>
+<text class="leaf" x="1466" y="353.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Collection and delivery arranged manually</text>
 <circle cx="1452" cy="389.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="389.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Tests the full journey before automating</text>
+<text class="leaf" x="1466" y="389.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Tests the full journey before automating</text>
 </g>
 <g id="branch-3">
 <rect x="1116" y="501" width="296" height="72" rx="18" fill="#8A1538"/>
@@ -81,13 +81,13 @@
 <text x="1284" y="552" dy=".35em" text-anchor="middle" font-size="23" font-weight="600" fill="#FFFFFF">usability tests</text>
 <circle cx="1144" cy="537" r="15" fill="#FFFFFF"/><text x="1144" y="537" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">3</text>
 <circle cx="1452" cy="483" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="483" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Task-based tests with QU students</text>
+<text class="leaf" x="1466" y="483" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Task-based tests with QU students</text>
 <circle cx="1452" cy="519" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="519" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Tasks: find an item, check out, list an item</text>
+<text class="leaf" x="1466" y="519" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Tasks: find an item, check out, list an item</text>
 <circle cx="1452" cy="555" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="555" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Record completion, errors and time taken</text>
+<text class="leaf" x="1466" y="555" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Record completion, errors and time taken</text>
 <circle cx="1452" cy="591" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="591" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Check the fee and decline policy are clear</text>
+<text class="leaf" x="1466" y="591" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Check the fee and decline policy are clear</text>
 </g>
 <g id="branch-4">
 <rect x="1116" y="702.5" width="296" height="72" rx="18" fill="#8A1538"/>
@@ -95,39 +95,39 @@
 <text x="1284" y="753.5" dy=".35em" text-anchor="middle" font-size="23" font-weight="600" fill="#FFFFFF">smoke test</text>
 <circle cx="1144" cy="738.5" r="15" fill="#FFFFFF"/><text x="1144" y="738.5" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">4</text>
 <circle cx="1452" cy="684.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="684.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Waitlist sign-ups for buyers and sellers</text>
+<text class="leaf" x="1466" y="684.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Waitlist sign-ups for buyers and sellers</text>
 <circle cx="1452" cy="720.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="720.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Ties in with the Part 5 landing page</text>
+<text class="leaf" x="1466" y="720.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Ties in with the Part 5 landing page</text>
 <circle cx="1452" cy="756.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="756.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Measure visit-to-sign-up conversion</text>
+<text class="leaf" x="1466" y="756.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Measure visit-to-sign-up conversion</text>
 <circle cx="1452" cy="792.5" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="792.5" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Compare buyer interest with seller interest</text>
+<text class="leaf" x="1466" y="792.5" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Compare buyer interest with seller interest</text>
 </g>
 <g id="branch-5">
 <rect x="1116" y="904" width="296" height="72" rx="18" fill="#8A1538"/>
 <text x="1284" y="940" dy=".35em" text-anchor="middle" font-size="24" font-weight="600" fill="#FFFFFF">Social media tests</text>
 <circle cx="1144" cy="940" r="15" fill="#FFFFFF"/><text x="1144" y="940" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">5</text>
 <circle cx="1452" cy="886" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="886" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">A/B test Instagram posts (@relore.qa)</text>
+<text class="leaf" x="1466" y="886" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">A/B test Instagram posts (@relore.qa)</text>
 <circle cx="1452" cy="922" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="922" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">A/B test TikTok Reels</text>
+<text class="leaf" x="1466" y="922" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">A/B test TikTok Reels</text>
 <circle cx="1452" cy="958" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="958" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Messages: price, sustainability or trust</text>
+<text class="leaf" x="1466" y="958" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Messages: price, sustainability or trust</text>
 <circle cx="1452" cy="994" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="1466" y="994" dy=".35em" text-anchor="start" font-size="22" fill="#221E20">Measure saves, clicks and waitlist sign-ups</text>
+<text class="leaf" x="1466" y="994" dy=".35em" text-anchor="start" font-size="22" fill="#38373D">Measure saves, clicks and waitlist sign-ups</text>
 </g>
 <g id="branch-6">
 <rect x="508" y="98" width="296" height="72" rx="18" fill="#8A1538"/>
 <text x="676" y="134" dy=".35em" text-anchor="middle" font-size="24" font-weight="600" fill="#FFFFFF">Campus pilot</text>
 <circle cx="536" cy="134" r="15" fill="#FFFFFF"/><text x="536" y="134" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">6</text>
 <circle cx="468" cy="80" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="80" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Limited launch at Qatar University</text>
+<text class="leaf" x="454" y="80" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Limited launch at Qatar University</text>
 <circle cx="468" cy="116" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="116" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Real listings, orders and deliveries</text>
+<text class="leaf" x="454" y="116" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Real listings, orders and deliveries</text>
 <circle cx="468" cy="152" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="152" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">One Relore driver within Greater Doha</text>
+<text class="leaf" x="454" y="152" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">One Relore driver within Greater Doha</text>
 <circle cx="468" cy="188" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="188" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Planning target: 30 orders a month (BMC)</text>
+<text class="leaf" x="454" y="188" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Planning target: 30 orders a month (BMC)</text>
 </g>
 <g id="branch-7">
 <rect x="508" y="354.6666666666667" width="296" height="72" rx="18" fill="#8A1538"/>
@@ -135,55 +135,55 @@
 <text x="676" y="405.6666666666667" dy=".35em" text-anchor="middle" font-size="23" font-weight="600" fill="#FFFFFF">interviews</text>
 <circle cx="536" cy="390.6666666666667" r="15" fill="#FFFFFF"/><text x="536" y="390.6666666666667" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#8A1538">7</text>
 <circle cx="468" cy="336.6666666666667" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="336.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Team survey, n = 29 (feasibility study)</text>
+<text class="leaf" x="454" y="336.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Team survey, n = 29 (feasibility study)</text>
 <circle cx="468" cy="372.6666666666667" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="372.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Top frustration: unclear condition, 76%</text>
+<text class="leaf" x="454" y="372.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Top frustration: unclear condition, 76%</text>
 <circle cx="468" cy="408.6666666666667" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="408.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Next: test the QAR 15 + 0.80/km fee and 20%</text>
+<text class="leaf" x="454" y="408.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Next: test the QAR 15 + 0.80/km fee and 20%</text>
 <circle cx="468" cy="444.6666666666667" r="4.5" fill="#8A1538"/>
-<text class="leaf" x="454" y="444.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Interview sellers: only 2 of 29 sell today</text>
+<text class="leaf" x="454" y="444.6666666666667" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Interview sellers: only 2 of 29 sell today</text>
 </g>
 <g id="branch-8">
-<rect x="508" y="629.3333333333334" width="296" height="72" rx="18" fill="#221E20"/>
+<rect x="508" y="629.3333333333334" width="296" height="72" rx="18" fill="#3D2922"/>
 <text x="676" y="665.3333333333334" dy=".35em" text-anchor="middle" font-size="24" font-weight="600" fill="#FFFFFF">Metrics to track</text>
-<circle cx="536" cy="665.3333333333334" r="15" fill="#FFFFFF"/><text x="536" y="665.3333333333334" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#221E20">8</text>
-<circle cx="468" cy="593.3333333333334" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="593.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Listings submitted</text>
-<circle cx="468" cy="629.3333333333334" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="629.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Share of listings sold</text>
-<circle cx="468" cy="665.3333333333334" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="665.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Repeat buyers</text>
-<circle cx="468" cy="701.3333333333334" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="701.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Delivery cost per order</text>
-<circle cx="468" cy="737.3333333333334" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="737.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Review turnaround time</text>
+<circle cx="536" cy="665.3333333333334" r="15" fill="#FFFFFF"/><text x="536" y="665.3333333333334" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#3D2922">8</text>
+<circle cx="468" cy="593.3333333333334" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="593.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Listings submitted</text>
+<circle cx="468" cy="629.3333333333334" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="629.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Share of listings sold</text>
+<circle cx="468" cy="665.3333333333334" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="665.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Repeat buyers</text>
+<circle cx="468" cy="701.3333333333334" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="701.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Delivery cost per order</text>
+<circle cx="468" cy="737.3333333333334" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="737.3333333333334" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Review turnaround time</text>
 </g>
 <g id="branch-9">
-<rect x="508" y="904" width="296" height="72" rx="18" fill="#221E20"/>
+<rect x="508" y="904" width="296" height="72" rx="18" fill="#3D2922"/>
 <text x="676" y="927" dy=".35em" text-anchor="middle" font-size="23" font-weight="600" fill="#FFFFFF">Pivot or persevere</text>
 <text x="676" y="955" dy=".35em" text-anchor="middle" font-size="23" font-weight="600" fill="#FFFFFF">criteria</text>
-<circle cx="536" cy="940" r="15" fill="#FFFFFF"/><text x="536" y="940" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#221E20">9</text>
-<rect x="525" y="988" width="262" height="32" rx="6" fill="#FFFFFF"/><rect x="529" y="992" width="254" height="24" rx="3" fill="none" stroke="#B97388" stroke-width="1.4" stroke-dasharray="5 4"/>
+<circle cx="536" cy="940" r="15" fill="#FFFFFF"/><text x="536" y="940" dy=".36em" text-anchor="middle" font-size="18" font-weight="700" fill="#3D2922">9</text>
+<rect x="525" y="988" width="262" height="32" rx="6" fill="#FFFFFF"/><rect x="529" y="992" width="254" height="24" rx="3" fill="none" stroke="#C9877B" stroke-width="1.4" stroke-dasharray="5 4"/>
 <text x="656" y="1004" dy=".36em" text-anchor="middle" font-size="16" font-weight="600" fill="#8A1538">All thresholds are assumptions</text>
-<circle cx="468" cy="886" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="886" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Assumed go: 30+ orders a month by month 3</text>
-<circle cx="468" cy="922" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="922" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Assumed go: 30%+ of listings sold in 30 days</text>
-<circle cx="468" cy="958" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="958" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Assumed go: 25%+ of buyers order again</text>
-<circle cx="468" cy="994" r="4.5" fill="#221E20"/>
-<text class="leaf" x="454" y="994" dy=".35em" text-anchor="end" font-size="22" fill="#221E20">Assumed pivot: delivery costs exceed the fee</text>
+<circle cx="468" cy="886" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="886" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Assumed go: 30+ orders a month by month 3</text>
+<circle cx="468" cy="922" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="922" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Assumed go: 30%+ of listings sold in 30 days</text>
+<circle cx="468" cy="958" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="958" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Assumed go: 25%+ of buyers order again</text>
+<circle cx="468" cy="994" r="4.5" fill="#3D2922"/>
+<text class="leaf" x="454" y="994" dy=".35em" text-anchor="end" font-size="22" fill="#38373D">Assumed pivot: delivery costs exceed the fee</text>
 </g>
 <g id="centre">
 <circle cx="960" cy="540" r="138" fill="#FFFFFF"/>
 <image href="../prototype/assets/relore-symbol-color.svg" x="912" y="492" width="96" height="96"/>
-<rect x="834" y="660" width="252" height="88" rx="26" fill="#221E20"/>
+<rect x="834" y="660" width="252" height="88" rx="26" fill="#38373D"/>
 <text x="960" y="689" dy=".35em" text-anchor="middle" font-size="28" font-weight="700" fill="#FFFFFF">Testing Relore’s</text>
 <text x="960" y="721" dy=".35em" text-anchor="middle" font-size="28" font-weight="700" fill="#FFFFFF">MVPs</text>
 </g>
-<g id="key" font-size="16" fill="#5C5658">
+<g id="key" font-size="16" fill="#57565E">
 <rect x="810" y="1016" width="18" height="18" rx="5" fill="#8A1538"/><text x="836" y="1025" dy=".35em">Ways to test</text>
-<rect x="964" y="1016" width="18" height="18" rx="5" fill="#221E20"/><text x="990" y="1025" dy=".35em">Measure and decide</text>
+<rect x="964" y="1016" width="18" height="18" rx="5" fill="#3D2922"/><text x="990" y="1025" dy=".35em">Measure and decide</text>
 <text x="960" y="1054" dy=".35em" text-anchor="middle" font-size="15">Relore · CMPS307 · Part 4: product and pitch</text>
 </g>
 </svg>

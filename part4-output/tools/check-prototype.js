@@ -73,6 +73,13 @@ const eq = (name, got, want) => ok(name, JSON.stringify(got) === JSON.stringify(
 
   await tap('[data-go="item/linen-shirt"]');
   eq('Listing opens Item details', await hash(), '#/item/linen-shirt');
+  await page.waitForFunction(() => { const i = document.querySelector('#carousel .slide img.photo'); return i && i.complete && i.naturalWidth > 0; }, null, { timeout: 5000 }).catch(() => {});
+  ok('Item details shows a real front photo that has loaded', await page.evaluate(() => { const i = document.querySelector('#carousel .slide img.photo'); return !!i && i.naturalWidth > 0 && i.getAttribute('src').startsWith('assets/photos/'); }));
+  ok('Every photo file the app uses exists', await page.evaluate(async () => {
+    const names = new Set(['fabric-closeup', ...Relore.state.listings, ...Relore.state.mine, ...Relore.state.queue, ...Relore.state.orders].map(x => typeof x === 'string' ? x : x.photo).filter(Boolean));
+    const res = await Promise.all([...names].map(n => new Promise(r => { const i = new Image(); i.onload = () => r(true); i.onerror = () => r(false); i.src = 'assets/photos/' + n + '.jpg'; })));
+    return res.every(Boolean) && names.size >= 15;
+  }));
   eq('Carousel has 4 photos (front, back, label, defects)', await page.locator('#carousel .slide').evaluateAll(s => s.map(x => x.dataset.shot)), ['front', 'back', 'label', 'defects']);
   await tap('[data-act="shot"][data-v="3"]'); await settle(page, 700);
   ok('Photo buttons move the carousel', (await page.evaluate(() => { const c = document.querySelector('#carousel'); return Math.round(c.scrollLeft / c.clientWidth); })) === 3);
@@ -222,7 +229,7 @@ const eq = (name, got, want) => ok(name, JSON.stringify(got) === JSON.stringify(
         const ab = document.querySelector('.actionbar');
         if (ab && ab.getBoundingClientRect().bottom > H + 0.5) out.push('action bar below the fold');
         // minimum logo sizes from the guidelines
-        for (const img of document.querySelectorAll('#app img')) {
+        for (const img of document.querySelectorAll('#app img[src*="assets/relore-"]')) {   // logos only; product photos are cropped on purpose
           const min = /small/.test(img.src) ? 72 : /horizontal/.test(img.src) ? 120 : 24;
           if (img.getBoundingClientRect().width < min) out.push('logo below minimum size: ' + img.src.split('/').pop());
           const r = img.getBoundingClientRect(), nat = img.naturalWidth / img.naturalHeight;

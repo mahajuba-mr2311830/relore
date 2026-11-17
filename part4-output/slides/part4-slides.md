@@ -2,7 +2,7 @@
 
 Copy-ready text for Part 4 (product and pitch). Paste the titles and on-slide text into Canva, place the screenshots named for each slide, and keep the speaker notes in Canva's notes panel.
 
-Style for every slide: Jost for all text, Thread Ink (#221E20) on Linen Sand (#F3ECE2) or white, with Relore Maroon (#8A1538) for accents. Use the supplied logo files only, with clear space around them. Screenshots are in `part4-output/screenshots/` and the mind-map is in `part4-output/mindmap/`.
+Style for every slide: Jost for all text, After Hours (#38373D) on Supermoon (#EEEFEA) or white, with Relore Maroon (#8A1538) for accents and buttons. Use Modern Love (#ECCEC4) and Ryokan Guesthouse (#DDCAB9) for soft panels, The Patio (#3D2922) for dark panels, and 36 Hours in Marrakesh (#C9877B) for decoration only, never behind text. Use the supplied logo files only, with clear space around them. Screenshots are in `part4-output/screenshots/` and the mind-map is in `part4-output/mindmap/`.
 
 ---
 
@@ -81,7 +81,7 @@ Each metric answers one question. Listings submitted shows whether sellers will 
 **On-slide text (11 words):**
 > Every listing reviewed by hand. Collected and delivered by Relore drivers.
 
-**One strong visual:** `02-home-browse.png` shown large in a phone outline on a Linen Sand background, with the colour logo (`relore-horizontal-color.svg`) in a corner and clear space around it. Nothing else on the slide.
+**One strong visual:** `02-home-browse.png` shown large in a phone outline on a Supermoon background, with the colour logo (`relore-horizontal-color.svg`) in a corner and clear space around it. Nothing else on the slide.
 
 **Say (not on the slide):** Relore is a managed marketplace for pre-owned clothing in Qatar. Buyers see only listings our team has reviewed, and Relore's own drivers handle collection and delivery.
 

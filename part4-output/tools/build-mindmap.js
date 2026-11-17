@@ -63,7 +63,9 @@ const BRANCHES = [
 const FOOT = 'Relore · CMPS307 · Part 4: product and pitch';
 
 /* ------------------------------ BRAND ------------------------------- */
-const C = { maroon: '#8A1538', ink: '#221E20', sand: '#F3ECE2', white: '#FFFFFF', line: '#B9A78E', soft: '#5C5658', tint: '#B97388' };
+// Palette v2: Supermoon background, After Hours text, The Patio for the "measure and decide" branches,
+// Ryokan for connector lines, Relore Maroon kept for the logo button and the "ways to test" branches.
+const C = { maroon: '#8A1538', ink: '#3D2922', text: '#38373D', sand: '#EEEFEA', white: '#FFFFFF', line: '#B8A28F', soft: '#57565E', tint: '#C9877B' };
 const FONT = 'Jost, Arial, sans-serif';
 const SYMBOL = '../prototype/assets/relore-symbol-color.svg';   // the kit file; never redrawn
 
@@ -129,7 +131,7 @@ for (const b of BRANCHES) {
   b.leaves.forEach((t, i) => {
     const ly = b.y0 + LH * i + LH / 2, lx = outer + s * LEAF_GAP;
     add(`<circle cx="${lx}" cy="${ly}" r="4.5" fill="${fill}"/>`);
-    add(`<text class="leaf" x="${lx + s * 14}" y="${ly}" dy=".35em" text-anchor="${s === 1 ? 'start' : 'end'}" font-size="${LEAF}" fill="${C.ink}">${esc(t)}</text>`);
+    add(`<text class="leaf" x="${lx + s * 14}" y="${ly}" dy=".35em" text-anchor="${s === 1 ? 'start' : 'end'}" font-size="${LEAF}" fill="${C.text}">${esc(t)}</text>`);
   });
   add(`</g>`);
 }
@@ -141,7 +143,7 @@ add(`<circle cx="${CX}" cy="${CY}" r="${DISC}" fill="${C.white}"/>`);
 add(`<image href="${SYMBOL}" x="${CX - SYM / 2}" y="${CY - SYM / 2}" width="${SYM}" height="${SYM}"/>`);
 const TW = 252, TH = 88, TY = CY + 120;   // 120 px from the centre keeps the symbol’s clear zone (39 + 78 px)
 const TLINES = TITLE.split(' ').length > 2 ? [TITLE.split(' ').slice(0, 2).join(' '), TITLE.split(' ').slice(2).join(' ')] : [TITLE];
-add(`<rect x="${CX - TW / 2}" y="${TY}" width="${TW}" height="${TH}" rx="26" fill="${C.ink}"/>`);
+add(`<rect x="${CX - TW / 2}" y="${TY}" width="${TW}" height="${TH}" rx="26" fill="${C.text}"/>`);
 TLINES.forEach((t, i) => add(`<text x="${CX}" y="${TY + TH / 2 + (TLINES.length === 1 ? 0 : i ? 17 : -15)}" dy=".35em" text-anchor="middle" font-size="28" font-weight="700" fill="${C.white}">${esc(t)}</text>`));
 add(`</g>`);
 

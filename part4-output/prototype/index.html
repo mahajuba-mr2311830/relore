@@ -18,25 +18,37 @@
 
 <style>
 /* ------------------------------------------------------------------
-   BRAND TOKENS (Relore Logo Guidelines v1.0)
-   Change colours here only.
+   BRAND TOKENS: palette v2 (17 Nov 2026). Change colours here only.
+   Relore Maroon is kept from the logo guidelines v1.0 for the logo's
+   button and every action (buttons, prices, links, active tab).
+   Previous palette, to switch back: --ink #221E20 (Thread Ink),
+   --sand #F3ECE2 (Linen Sand), --sand-deep #E2D4C0, --maroon-wash #EBD8D6.
 ------------------------------------------------------------------- */
 :root {
-  --maroon: #8A1538;        /* Relore Maroon: brand accents, buttons */
-  --ink: #221E20;           /* Thread Ink: text */
-  --sand: #F3ECE2;          /* Linen Sand: backgrounds */
-  --white: #FFFFFF;
+  /* The palette */
+  --maroon: #8A1538;        /* Relore Maroon (kept): logo button, buttons, prices, links */
+  --after-hours: #38373D;   /* text, phone frame */
+  --modern-love: #ECCEC4;   /* soft highlights: selected options, policy notes, tiles */
+  --marrakesh: #C9877B;     /* decoration only (illustrations). Never text or buttons: 2.9:1 with white */
+  --patio: #3D2922;         /* dark surfaces: Relore team header */
+  --ryokan: #DDCAB9;        /* secondary surfaces and lines */
+  --supermoon: #EEEFEA;     /* page and app background */
+  --white: #FFFFFF;         /* cards and panels */
 
-  /* Tints and shades of the three brand colours, for UI states */
+  /* Roles (the rest of the file uses these names) */
+  --ink: var(--after-hours);       /* 10.2:1 on Supermoon */
+  --sand: var(--supermoon);
+  --sand-deep: var(--ryokan);
+
+  /* Tints and shades for UI states */
   --maroon-dark: #6E102C;
   --maroon-60: #B97388;
   --maroon-30: #DCB9C3;
-  --maroon-wash: #EBD8D6;
-  --ink-soft: #5C5658;      /* secondary text, 6.1:1 on Linen Sand */
-  --ink-20: #D3D0D1;
-  --sand-deep: #E2D4C0;
-  --sand-line: #DACDB9;
-  --sand-shade: #B9A78E;
+  --maroon-wash: var(--modern-love);
+  --ink-soft: #57565E;      /* secondary text: 6.3:1 on Supermoon, 4.9:1 on Modern Love */
+  --ink-20: #D2D1D5;
+  --sand-line: #DED5CB;
+  --sand-shade: #B8A28F;
 
   /* Muted status colours (not brand colours) */
   --ok: #3E6B4F;
@@ -114,7 +126,7 @@ img, svg { display: block; }
 .phone {
   width: 414px; height: 868px; padding: 12px;
   background: var(--ink); border-radius: 54px;
-  box-shadow: 0 34px 60px -28px rgba(34, 30, 32, .55), 0 10px 22px -12px rgba(34, 30, 32, .3);
+  box-shadow: 0 34px 60px -28px rgba(56, 55, 61, .55), 0 10px 22px -12px rgba(56, 55, 61, .3);
   transform-origin: top center;
 }
 .app {
@@ -129,7 +141,7 @@ img, svg { display: block; }
 }
 .statusbar svg { width: 62px; height: 14px; }
 .app[data-tone="maroon"] .statusbar { background: var(--maroon); color: var(--white); }
-.app[data-tone="ink"] .statusbar { background: var(--ink); color: var(--white); }
+.app[data-tone="ink"] .statusbar { background: var(--patio); color: var(--white); }
 .app[data-tone="white"] .statusbar { background: var(--white); }
 
 @media (max-width: 1180px) { .side-right { display: none; } .stage { grid-template-columns: minmax(0, 1fr) auto; } }
@@ -158,8 +170,8 @@ img, svg { display: block; }
 .bar h1 { font-size: 18px; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar .sub { display: block; font-size: 13px; font-weight: 400; color: var(--ink-soft); }
 .bar.white { background: var(--white); border-bottom: 1px solid var(--sand-line); }
-.bar.ink { background: var(--ink); color: var(--white); }
-.bar.ink .sub { color: var(--ink-20); }
+.bar.ink { background: var(--patio); color: var(--white); }
+.bar.ink .sub { color: var(--modern-love); }
 .bar-home { padding: 0 12px 0 14px; justify-content: space-between; min-height: 68px; }
 /* Wordmark with rimmed button: minimum 120 px wide. The SVG carries its own margin; the 20 px either side completes the clear zone. */
 .bar-home .logo { width: 132px; height: auto; }
@@ -167,7 +179,7 @@ img, svg { display: block; }
   flex: none; width: var(--tap); height: var(--tap); display: grid; place-items: center;
   background: none; border: 0; border-radius: 50%; transition: background .15s;
 }
-.iconbtn:hover { background: rgba(34, 30, 32, .07); }
+.iconbtn:hover { background: rgba(56, 55, 61, .07); }
 .bar.ink .iconbtn:hover { background: rgba(255, 255, 255, .14); }
 .ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 .ic.sm { width: 18px; height: 18px; }
@@ -270,7 +282,7 @@ img, svg { display: block; }
 }
 .input::placeholder, .textarea::placeholder { color: var(--ink-soft); opacity: 1; }
 .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px var(--maroon-30); }
-.select { appearance: none; padding-right: 38px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23221E20' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; }
+.select { appearance: none; padding-right: 38px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338373D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; }
 .field.invalid .input, .field.invalid .select { border-color: var(--err); }
 .error { color: var(--err); font-size: 14px; font-weight: 500; display: flex; gap: 6px; align-items: center; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -286,7 +298,7 @@ img, svg { display: block; }
 .choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
 .choice .dot { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--sand-shade); display: grid; place-items: center; }
 .choice .dot::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--maroon); transform: scale(0); transition: transform .15s var(--ease); }
-.choice label:has(input:checked) { border-color: var(--maroon); background: #FBF4F3; }
+.choice label:has(input:checked) { border-color: var(--maroon); background: #F7EAE5; }
 .choice label:has(input:checked) .dot { border-color: var(--maroon); }
 .choice label:has(input:checked) .dot::after { transform: scale(1); }
 .choice label:has(input:focus-visible) { outline: 2.5px solid var(--maroon); outline-offset: 2px; }
@@ -301,7 +313,7 @@ img, svg { display: block; }
   position: absolute; left: 16px; right: 16px; bottom: 86px; z-index: 30;
   background: var(--ink); color: var(--white); padding: 13px 16px; border-radius: 12px;
   font-size: 15px; font-weight: 500; display: flex; gap: 10px; align-items: center;
-  box-shadow: 0 14px 28px -12px rgba(34, 30, 32, .6);
+  box-shadow: 0 14px 28px -12px rgba(56, 55, 61, .6);
   opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .2s, transform .25s var(--ease);
 }
 .toast.show { opacity: 1; transform: none; }
@@ -309,6 +321,11 @@ img, svg { display: block; }
 /* Garment tiles */
 .tile { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 10 / 11; }
 .tile svg { width: 100%; height: 100%; }
+img.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+.defect-ring { position: absolute; left: 52%; top: 38%; width: 26%; aspect-ratio: 1; border-radius: 50%; border: 2.5px dashed var(--maroon); box-shadow: 0 0 0 3px rgba(255, 255, 255, .55); }
+.defect-ring::after { content: ""; position: absolute; left: 34%; top: 38%; width: 32%; height: 22%; border-radius: 50%; background: rgba(110, 80, 60, .45); transform: rotate(-20deg); }
+.defect-ok { position: absolute; left: 50%; top: 50%; width: 22%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: var(--white); color: var(--ok); display: grid; place-items: center; box-shadow: 0 6px 14px -8px rgba(56, 55, 61, .5); }
+.defect-ok .ic { width: 55%; height: 55%; stroke-width: 2.6; }
 .tile.white { background: var(--white); }
 .tile.wash  { background: var(--maroon-wash); }
 .tile.deep  { background: var(--sand-deep); }
@@ -322,10 +339,10 @@ img, svg { display: block; }
 .rail .line { position: absolute; left: -30px; right: -30px; top: 2px; border-top: 2px dashed var(--sand-shade); }
 .tag {
   position: absolute; top: 24px; width: 36%; background: var(--white); border-radius: 12px; padding: 22px 8px 8px;
-  box-shadow: 0 16px 26px -18px rgba(34, 30, 32, .5);
+  box-shadow: 0 16px 26px -18px rgba(56, 55, 61, .5);
   transform-origin: 50% 0; animation: sway 1.6s var(--ease) both;
 }
-.tag::before { content: ""; position: absolute; top: 8px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--sand); box-shadow: inset 0 1px 1px rgba(34,30,32,.25); }
+.tag::before { content: ""; position: absolute; top: 8px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--sand); box-shadow: inset 0 1px 1px rgba(56,55,61,.25); }
 .tag::after { content: ""; position: absolute; top: -22px; left: 50%; height: 34px; border-left: 1.5px solid var(--maroon); }
 .tag .tile { border-radius: 8px; }
 .tag b { display: block; font-size: 12.5px; font-weight: 600; text-align: center; padding-top: 6px; color: var(--maroon); }
@@ -378,7 +395,7 @@ img, svg { display: block; }
 ------------------------------------------------------------------- */
 .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--white); }
 .carousel::-webkit-scrollbar { display: none; }
-.carousel .slide { flex: 0 0 100%; scroll-snap-align: center; aspect-ratio: 10 / 9.4; }
+.carousel .slide { position: relative; flex: 0 0 100%; scroll-snap-align: center; aspect-ratio: 10 / 9.4; overflow: hidden; }
 .carousel .slide svg { width: 100%; height: 100%; }
 .carousel .slide.wash { background: var(--maroon-wash); }
 .carousel .slide.deep { background: var(--sand-deep); }
@@ -544,7 +561,7 @@ img, svg { display: block; }
 .demo-handle:hover, .demo-handle:focus-visible { opacity: 1; }
 @media (max-width: 860px) { .demo-handle { display: grid; } }
 .clean .demo-handle { display: none !important; }
-.sheet-back { position: absolute; inset: 0; z-index: 40; background: rgba(34, 30, 32, .45); display: none; align-items: flex-end; }
+.sheet-back { position: absolute; inset: 0; z-index: 40; background: rgba(56, 55, 61, .45); display: none; align-items: flex-end; }
 .sheet-back.open { display: flex; }
 .sheet { width: 100%; max-height: 82%; overflow-y: auto; background: var(--sand); border-radius: 22px 22px 0 0; padding: 14px 20px calc(18px + env(safe-area-inset-bottom)); animation: rise .25s var(--ease); }
 @keyframes rise { from { transform: translateY(30px); opacity: .6; } }
@@ -691,30 +708,30 @@ const ROAD_KM = {
 const roadKm = (sellerArea, addrId) => ROAD_KM[sellerArea][addrId];
 
 const LISTINGS = [
-  { id: 'linen-shirt', title: 'Linen shirt', cat: 'women', brand: 'Zara', size: 'M', sg: 'M', cond: 'Very good', price: 45, area: 'Al Sadd',
-    seller: { name: 'Noor A.', rating: 4.8, sales: 12 }, meas: 'Chest 52 cm, length 68 cm (laid flat)', defect: 'Small mark on the left cuff', art: 'shirt', pal: 'sand', bg: 'wash' },
+  { id: 'linen-shirt', title: 'Linen shirt', cat: 'men', brand: 'Zara', size: 'M', sg: 'M', cond: 'Very good', price: 45, area: 'Al Sadd',
+    seller: { name: 'Noor A.', rating: 4.8, sales: 12 }, meas: 'Chest 52 cm, length 72 cm (laid flat)', defect: 'Small mark near the hem', art: 'polo', pal: 'cream', bg: 'deep', photo: 'linen-shirt' },
   { id: 'denim-jacket', title: 'Denim jacket', cat: 'men', brand: 'Levi’s', size: 'L', sg: 'L', cond: 'Good', price: 120, area: 'Lusail',
-    seller: { name: 'Hamad K.', rating: 4.6, sales: 7 }, meas: 'Chest 58 cm, length 66 cm (laid flat)', defect: 'Light fading at the elbows', art: 'jacket', pal: 'slate', bg: 'deep' },
+    seller: { name: 'Hamad K.', rating: 4.6, sales: 7 }, meas: 'Chest 58 cm, length 66 cm (laid flat)', defect: 'Light fading at the elbows', art: 'jacket', pal: 'slate', bg: 'deep', photo: 'denim-jacket' },
+  { id: 'leather-jacket', title: 'Leather jacket', cat: 'women', brand: 'Massimo Dutti', size: 'S', sg: 'S', cond: 'Very good', price: 220, area: 'The Pearl',
+    seller: { name: 'Dana F.', rating: 4.9, sales: 16 }, meas: 'Chest 47 cm, length 56 cm (laid flat)', defect: 'Light creasing on the sleeves', art: 'jacket', pal: 'patio', bg: 'white', photo: 'leather-jacket' },
+  { id: 'baby-knit', title: 'Knitted baby set, 6 to 12 months', cat: 'children', brand: 'H&M', size: '6–12 months', sg: 'kids', cond: 'Good', price: 25, area: 'Al Wakrah',
+    seller: { name: 'Priya N.', rating: 4.5, sales: 9 }, meas: 'Chest 26 cm, length 30 cm (laid flat)', defect: 'Slight bobbling on the front', art: 'jumper', pal: 'cream', bg: 'white', photo: 'baby-knit-set' },
+  { id: 'checked-blazer', title: 'Checked wool blazer', cat: 'designer', brand: 'Ralph Lauren', size: 'M', sg: 'M', cond: 'Like new', price: 260, area: 'West Bay',
+    seller: { name: 'Omar T.', rating: 4.8, sales: 11 }, meas: 'Chest 54 cm, length 75 cm (laid flat)', defect: '', art: 'blazer', pal: 'slate', bg: 'deep', photo: 'checked-blazer' },
+  { id: 'cream-jumper', title: 'Cream knit jumper', cat: 'women', brand: 'Mango', size: 'M', sg: 'M', cond: 'Like new', price: 85, area: 'Education City',
+    seller: { name: 'Sara M.', rating: 4.7, sales: 8 }, meas: 'Chest 50 cm, length 60 cm (laid flat)', defect: '', art: 'jumper', pal: 'cream', bg: 'wash', photo: 'cream-jumper' },
+  { id: 'black-jeans', title: 'Black slim jeans', cat: 'men', brand: 'Uniqlo', size: '32', sg: 'numbered', cond: 'Good', price: 55, area: 'Al Gharrafa',
+    seller: { name: 'Ahmed B.', rating: 4.4, sales: 4 }, meas: 'Waist 82 cm, inside leg 79 cm', defect: 'Minor wear at the hems', art: 'trousers', pal: 'ink', bg: 'white', photo: 'black-jeans' },
+  { id: 'blazer', title: 'Tailored blazer', cat: 'designer', brand: 'BOSS', size: 'L', sg: 'L', cond: 'Very good', price: 380, area: 'Lusail',
+    seller: { name: 'Khalid M.', rating: 5.0, sales: 3 }, meas: 'Chest 56 cm, length 74 cm (laid flat)', defect: '', art: 'blazer', pal: 'ink', bg: 'deep', photo: 'tailored-blazer' },
+  { id: 'kids-tshirt', title: 'Cotton T-shirt, age 6 to 7', cat: 'children', brand: 'Zara Kids', size: '6–7 years', sg: 'kids', cond: 'Very good', price: 30, area: 'Al Rayyan',
+    seller: { name: 'Layla H.', rating: 4.8, sales: 14 }, meas: 'Chest 36 cm, length 46 cm (laid flat)', defect: '', art: 'polo', pal: 'cream', bg: 'wash', photo: 'kids-tshirt' },
+  { id: 'jumper', title: 'Striped knitted jumper', cat: 'women', brand: 'Marks & Spencer', size: 'M', sg: 'M', cond: 'Good', price: 40, area: 'Al Sadd',
+    seller: { name: 'Reem J.', rating: 4.6, sales: 6 }, meas: 'Chest 54 cm, length 64 cm (laid flat)', defect: 'A pulled thread near the hem', art: 'jumper', pal: 'sand', bg: 'deep', photo: 'striped-jumper' },
   { id: 'abaya', title: 'Abaya with embroidered cuffs', cat: 'abaya', brand: 'Tailor-made', size: '56', sg: 'numbered', cond: 'Like new', price: 180, area: 'Al Rayyan',
     seller: { name: 'Hessa K.', rating: 4.9, sales: 21 }, meas: 'Length 142 cm, sleeve 60 cm', defect: '', art: 'abaya', pal: 'ink', bg: 'wash' },
   { id: 'thobe', title: 'White thobe', cat: 'abaya', brand: 'Tailor-made', size: '58', sg: 'numbered', cond: 'Very good', price: 90, area: 'Al Wakrah',
-    seller: { name: 'Yousef R.', rating: 4.7, sales: 5 }, meas: 'Length 147 cm, chest 56 cm', defect: '', art: 'thobe', pal: 'cream', bg: 'deep' },
-  { id: 'wool-coat', title: 'Wool-blend coat', cat: 'women', brand: 'Massimo Dutti', size: 'S', sg: 'S', cond: 'Very good', price: 220, area: 'The Pearl',
-    seller: { name: 'Dana F.', rating: 4.9, sales: 16 }, meas: 'Chest 48 cm, length 98 cm (laid flat)', defect: 'Slight bobbling under the arms', art: 'coat', pal: 'maroon', bg: 'white' },
-  { id: 'kids-hoodie', title: 'Hoodie, age 6 to 7', cat: 'children', brand: 'H&M', size: '6–7 years', sg: 'kids', cond: 'Good', price: 25, area: 'Al Wakrah',
-    seller: { name: 'Priya N.', rating: 4.5, sales: 9 }, meas: 'Chest 38 cm, length 46 cm (laid flat)', defect: 'Faded print on the pocket', art: 'hoodie', pal: 'rose', bg: 'white' },
-  { id: 'polo', title: 'Cotton polo shirt', cat: 'designer', brand: 'Ralph Lauren', size: 'M', sg: 'M', cond: 'Like new', price: 150, area: 'West Bay',
-    seller: { name: 'Omar T.', rating: 4.8, sales: 11 }, meas: 'Chest 53 cm, length 71 cm (laid flat)', defect: '', art: 'polo', pal: 'maroon', bg: 'deep' },
-  { id: 'midi-dress', title: 'Midi dress', cat: 'women', brand: 'Mango', size: 'M', sg: 'M', cond: 'Like new', price: 85, area: 'Education City',
-    seller: { name: 'Sara M.', rating: 4.7, sales: 8 }, meas: 'Bust 46 cm, length 118 cm (laid flat)', defect: '', art: 'dress', pal: 'rose', bg: 'wash' },
-  { id: 'chinos', title: 'Slim chinos', cat: 'men', brand: 'Uniqlo', size: '32', sg: 'numbered', cond: 'Good', price: 55, area: 'Al Gharrafa',
-    seller: { name: 'Ahmed B.', rating: 4.4, sales: 4 }, meas: 'Waist 82 cm, inside leg 79 cm', defect: 'Minor wear at the hems', art: 'trousers', pal: 'sand', bg: 'white' },
-  { id: 'blazer', title: 'Tailored blazer', cat: 'designer', brand: 'BOSS', size: 'L', sg: 'L', cond: 'Very good', price: 380, area: 'Lusail',
-    seller: { name: 'Khalid M.', rating: 5.0, sales: 3 }, meas: 'Chest 56 cm, length 74 cm (laid flat)', defect: '', art: 'blazer', pal: 'ink', bg: 'deep' },
-  { id: 'dungarees', title: 'Denim dungarees, age 3 to 4', cat: 'children', brand: 'Zara Kids', size: '3–4 years', sg: 'kids', cond: 'Very good', price: 35, area: 'Al Rayyan',
-    seller: { name: 'Layla H.', rating: 4.8, sales: 14 }, meas: 'Waist 26 cm, inside leg 38 cm (laid flat)', defect: '', art: 'dungarees', pal: 'slate', bg: 'wash' },
-  { id: 'jumper', title: 'Striped crew-neck jumper', cat: 'men', brand: 'Marks & Spencer', size: 'M', sg: 'M', cond: 'Good', price: 40, area: 'Al Sadd',
-    seller: { name: 'Reem J.', rating: 4.6, sales: 6 }, meas: 'Chest 54 cm, length 67 cm (laid flat)', defect: 'A pulled thread near the hem', art: 'jumper', pal: 'cream', bg: 'deep' }
+    seller: { name: 'Yousef R.', rating: 4.7, sales: 5 }, meas: 'Length 147 cm, chest 56 cm', defect: '', art: 'thobe', pal: 'cream', bg: 'deep' }
 ];
 
 const SHOTS = [['front', 'Front'], ['back', 'Back'], ['label', 'Label'], ['defects', 'Defects']];
@@ -725,22 +742,22 @@ const state = {
   checkout: { addr: 'ec', feePay: 'card', itemPay: 'card' },
   chats: {},
   orders: [
-    { id: 'RL-1038', title: 'Pleated midi skirt', brand: 'Mango', size: 'M', art: 'skirt', pal: 'maroon', bg: 'deep', area: 'Al Sadd',
+    { id: 'RL-1038', title: 'Orange knit jumper', brand: 'Mango', size: 'M', art: 'jumper', pal: 'rose', bg: 'deep', photo: 'orange-jumper', area: 'Al Sadd',
       addr: 'ec', km: 12, price: 60, itemPay: 'card', feePay: 'card', step: 3, times: ['2 Nov, 10:05', '2 Nov, 13:20', '2 Nov, 13:48', '2 Nov, 14:15'], issue: false }
   ],
   orderSeq: 1042,
   mine: [
-    { id: 'm1', title: 'Cotton cardigan', brand: 'Mango', size: 'M', price: 150, status: 'sold', art: 'cardigan', pal: 'rose', bg: 'white' },
-    { id: 'm2', title: 'Pleated skirt', brand: 'Zara', size: 'S', price: 60, status: 'live', art: 'skirt', pal: 'ink', bg: 'wash' },
-    { id: 'm3', title: 'Hooded rain jacket', brand: 'Decathlon', size: 'M', price: 95, status: 'wait', art: 'hoodie', pal: 'maroon', bg: 'deep' }
+    { id: 'm1', title: 'Knit cardigan', brand: 'Mango', size: 'M', price: 150, status: 'sold', art: 'cardigan', pal: 'sand', bg: 'white', photo: 'knit-cardigan' },
+    { id: 'm2', title: 'Straight-leg jeans', brand: 'Zara', size: 'S', price: 60, status: 'live', art: 'trousers', pal: 'slate', bg: 'wash', photo: 'straight-jeans' },
+    { id: 'm3', title: 'Hooded rain jacket', brand: 'Decathlon', size: 'M', price: 95, status: 'wait', art: 'hoodie', pal: 'slate', bg: 'deep', photo: 'rain-jacket' }
   ],
   queue: [
     { id: 'q1', mineId: 'm3', title: 'Hooded rain jacket', brand: 'Decathlon', size: 'M', cond: 'Very good', price: 95, area: 'Education City', cat: 'women',
-      seller: 'Demo account', meas: 'Chest 55 cm, length 70 cm (laid flat)', defect: '', art: 'hoodie', pal: 'maroon', bg: 'deep', rejecting: false },
+      seller: 'Demo account', meas: 'Chest 55 cm, length 70 cm (laid flat)', defect: '', art: 'hoodie', pal: 'slate', bg: 'deep', photo: 'rain-jacket', rejecting: false },
     { id: 'q2', title: 'Open abaya with belt', brand: 'Tailor-made', size: '54', cond: 'Like new', price: 140, area: 'Al Rayyan', cat: 'abaya',
       seller: 'Fatima H.', meas: 'Length 140 cm, sleeve 58 cm', defect: '', art: 'abaya', pal: 'slate', bg: 'wash', rejecting: false },
-    { id: 'q3', title: 'School blazer, age 9 to 10', brand: 'Marks & Spencer', size: '9–10 years', cond: 'Good', price: 40, area: 'Al Wakrah', cat: 'children',
-      seller: 'Joseph D.', meas: 'Chest 40 cm, length 54 cm (laid flat)', defect: 'Small repair to the lining', art: 'blazer', pal: 'maroon', bg: 'white', rejecting: false }
+    { id: 'q3', title: 'Green cardigan', brand: 'Marks & Spencer', size: 'M', cond: 'Good', price: 40, area: 'Al Wakrah', cat: 'women',
+      seller: 'Joseph D.', meas: 'Chest 48 cm, length 58 cm (laid flat)', defect: 'A small pulled thread on one sleeve', art: 'cardigan', pal: 'slate', bg: 'white', photo: 'green-cardigan', rejecting: false }
   ],
   draft: null,
   lastSubmitted: null,
@@ -750,23 +767,25 @@ const state = {
 function freshDraft() {
   return {
     photos: { front: false, back: false, label: false, defects: false },
-    title: 'Denim shirt', cat: 'women', brand: 'Gap', size: 'M', chest: '52', length: '70',
+    title: 'Grey hoodie', cat: 'men', brand: 'Gap', size: 'M', chest: '55', length: '68',
     cond: 'Very good', defect: '', price: '60', area: 'Education City',
-    art: 'shirt', pal: 'slate', bg: 'wash', errors: {}, photoError: false, noDefects: false
+    art: 'hoodie', pal: 'slate', bg: 'wash', photo: 'grey-hoodie', errors: {}, photoError: false, noDefects: false
   };
 }
 state.draft = freshDraft();
 
 /* ====================================================================
-   3. ILLUSTRATIONS (inline SVG, brand tints only, no photographs)
+   3. ILLUSTRATIONS (inline SVG, brand tints only), used for back views, labels,
+      and items without a photo
    ==================================================================== */
 const PAL = {
-  maroon: { m: '#8A1538', s: '#6E102C', l: '#B97388', d: '#F3ECE2' },
-  rose:   { m: '#CF9AA7', s: '#B97388', l: '#E9CBD2', d: '#8A1538' },
-  ink:    { m: '#2F2A2C', s: '#221E20', l: '#5C5658', d: '#DCB9C3' },
-  slate:  { m: '#6F696B', s: '#565052', l: '#8F898B', d: '#F3ECE2' },
-  sand:   { m: '#D8C9B3', s: '#BFAD93', l: '#EADFCF', d: '#8A1538' },
-  cream:  { m: '#FBF8F3', s: '#D8C9B3', l: '#FFFFFF', d: '#8A1538' }
+  maroon: { m: '#8A1538', s: '#6E102C', l: '#B97388', d: '#EEEFEA' },   /* Relore Maroon */
+  rose:   { m: '#C9877B', s: '#A96A5F', l: '#ECCEC4', d: '#8A1538' },   /* 36 Hours in Marrakesh */
+  ink:    { m: '#38373D', s: '#2A292E', l: '#5F5E66', d: '#ECCEC4' },   /* After Hours */
+  patio:  { m: '#3D2922', s: '#2C1D18', l: '#6B5047', d: '#ECCEC4' },   /* The Patio */
+  slate:  { m: '#6E6C73', s: '#57565E', l: '#8C8A91', d: '#EEEFEA' },   /* After Hours, lighter */
+  sand:   { m: '#DDCAB9', s: '#C2AC98', l: '#ECE3D9', d: '#8A1538' },   /* Ryokan Guesthouse */
+  cream:  { m: '#F7F7F3', s: '#DDCAB9', l: '#FFFFFF', d: '#8A1538' }    /* Supermoon */
 };
 
 function art(kind, pal, view = 'front', o = {}) {
@@ -794,9 +813,9 @@ function art(kind, pal, view = 'front', o = {}) {
       ln('M0 52 H200', 1.6) + ln('M0 176 H200', 1.6) +
       `<rect x="36" y="64" width="128" height="96" rx="4" fill="#FBF8F3"/>` +
       `<path d="M44 73 H156" stroke="#8A1538" stroke-width="1.8" stroke-dasharray="5 4" fill="none"/>` +
-      `<text x="100" y="104" text-anchor="middle" font-family="Jost, Arial, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="1.5" fill="#221E20">${esc(txt)}</text>` +
-      `<text x="100" y="124" text-anchor="middle" font-family="Jost, Arial, sans-serif" font-size="12" fill="#5C5658">SIZE ${esc(String(o.size || 'M').toUpperCase())}</text>` +
-      `<g fill="none" stroke="#221E20" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">` +
+      `<text x="100" y="104" text-anchor="middle" font-family="Jost, Arial, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="1.5" fill="#38373D">${esc(txt)}</text>` +
+      `<text x="100" y="124" text-anchor="middle" font-family="Jost, Arial, sans-serif" font-size="12" fill="#57565E">SIZE ${esc(String(o.size || 'M').toUpperCase())}</text>` +
+      `<g fill="none" stroke="#38373D" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">` +
       `<path d="M62 138 l3 10 h10 l3 -10 M62 141 q4 -3 8 0 t8 0"/><path d="M92 149 l7 -12 l7 12z"/><rect x="118" y="137" width="12" height="12"/><circle cx="124" cy="143" r="3.6"/><path d="M142 148 h14 v-5 q0 -5 -6 -5 h-5z"/></g>`;
     return `<svg class="art" viewBox="0 0 200 220" role="img" aria-label="Clothing label: ${esc(o.brand || '')}, size ${esc(o.size || '')}">${g}</svg>`;
   }
@@ -883,9 +902,19 @@ function art(kind, pal, view = 'front', o = {}) {
       break;
   }
   const names = { shirt: 'shirt', jacket: 'jacket', hoodie: 'hooded top', jumper: 'jumper', cardigan: 'cardigan', polo: 'polo shirt', blazer: 'blazer', coat: 'coat', dress: 'dress', skirt: 'skirt', abaya: 'abaya', thobe: 'thobe', trousers: 'trousers', dungarees: 'dungarees' };
-  return `<svg class="art" viewBox="0 0 200 220" role="img" aria-label="Illustration of a ${names[kind] || 'garment'}, ${back ? 'back' : 'front'} view"><ellipse cx="100" cy="211" rx="56" ry="4" fill="#221E20" opacity=".07"/>${g}</svg>`;
+  return `<svg class="art" viewBox="0 0 200 220" role="img" aria-label="Illustration of a ${names[kind] || 'garment'}, ${back ? 'back' : 'front'} view"><ellipse cx="100" cy="211" rx="56" ry="4" fill="#38373D" opacity=".07"/>${g}</svg>`;
 }
-const tile = (it, view = 'front', cls = '') => `<div class="tile ${it.bg} ${cls}">${art(it.art, it.pal, view, it)}</div>`;
+/* Real photos (free-licence, from Unsplash: see assets/photos/CREDITS.md) for the front view and the
+   defects close-up. The back view stays a drawing, and so does the label, so it always shows the
+   listing's own brand and size. Items without a photo (the abaya and thobe) are drawn throughout. */
+const PHOTO_DIR = 'assets/photos/';
+function media(it, view = 'front') {
+  if (it.photo && view === 'front') return `<img class="photo" src="${PHOTO_DIR}${it.photo}.jpg" alt="${esc(it.title || 'Item')}, front" loading="lazy">`;
+  if (it.photo && view === 'defects') return `<img class="photo" src="${PHOTO_DIR}fabric-closeup.jpg" alt="${it.defect ? 'Close-up of the defect: ' + esc(it.defect) : 'Close-up of the fabric. The seller reports no visible defects'}" loading="lazy">` +
+    (it.defect ? '<span class="defect-ring" aria-hidden="true"></span>' : `<span class="defect-ok" aria-hidden="true">${ic('check')}</span>`);
+  return art(it.art, it.pal, view, it);
+}
+const tile = (it, view = 'front', cls = '') => `<div class="tile ${it.bg} ${cls}">${media(it, view)}</div>`;
 
 const I = {
   home: '<path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>',
@@ -964,9 +993,9 @@ screens.splash = () => ({
   <div class="splash">
     <div class="rail" aria-hidden="true">
       <div class="line"></div>
-      <div class="tag t1"><div class="tile deep">${art('jacket', 'slate')}</div><b>QAR 120</b></div>
-      <div class="tag t2"><div class="tile wash">${art('abaya', 'ink')}</div><b>QAR 180</b></div>
-      <div class="tag t3"><div class="tile deep">${art('polo', 'maroon')}</div><b>QAR 150</b></div>
+      <div class="tag t1"><div class="tile deep">${media({ photo: 'denim-jacket', title: 'Denim jacket' })}</div><b>QAR 120</b></div>
+      <div class="tag t2"><div class="tile wash">${media({ photo: 'striped-jumper', title: 'Striped knitted jumper' })}</div><b>QAR 40</b></div>
+      <div class="tag t3"><div class="tile deep">${media({ photo: 'tailored-blazer', title: 'Tailored blazer' })}</div><b>QAR 380</b></div>
     </div>
     <img class="logo" src="${LOGO.colour}" alt="Relore">
     <p class="tagline">${esc(BRAND.tagline)}</p>
@@ -996,7 +1025,7 @@ function gridHtml() {
   if (!list.length) return `<div class="empty"><h2>No listings match yet</h2><p>Try another category or size, or clear your search.</p><button class="btn btn-secondary sm" type="button" data-act="clear-filters">Clear filters</button></div>`;
   return list.map(l => `
     <button class="card" type="button" data-go="item/${l.id}" aria-label="${esc(l.title)}, ${esc(l.brand)}, size ${esc(l.size)}, ${qar(l.price)}, reviewed">
-      <div class="tile ${l.bg}">${art(l.art, l.pal, 'front', l)}<span class="sewn">${ic('check', 'xs')}Reviewed</span></div>
+      <div class="tile ${l.bg}">${media(l, 'front')}<span class="sewn">${ic('check', 'xs')}Reviewed</span></div>
       <span class="name">${esc(l.title)}</span>
       <span class="meta">${esc(l.brand)} · Size ${esc(l.size)}</span>
       <span class="price"><b class="num">${qar(l.price)}</b><span>${esc(l.area)}</span></span>
@@ -1040,7 +1069,7 @@ screens.item = id => {
     html: topbar('Item details', 'home') + `
     <div class="scroll">
       <div class="carousel" id="carousel" tabindex="0" aria-label="Listing photos: front, back, label and defects">
-        ${SHOTS.map(([v, n]) => `<div class="slide ${v === 'front' || v === 'back' ? it.bg : 'deep'}" data-shot="${v}" aria-label="${n}">${art(it.art, it.pal, v, it)}</div>`).join('')}
+        ${SHOTS.map(([v, n]) => `<div class="slide ${v === 'front' || v === 'back' ? it.bg : 'deep'}" data-shot="${v}" aria-label="${n}">${media(it, v)}</div>`).join('')}
       </div>
       <div class="shots" role="group" aria-label="Choose photo">
         ${SHOTS.map(([v, n], i) => `<button type="button" data-act="shot" data-v="${i}" aria-pressed="${i === 0}">${n}</button>`).join('')}
@@ -1199,7 +1228,7 @@ const STEPS = [
   ['Out for delivery', 'Your Relore driver is on the way to you.'],
   ['Delivered', 'Check the item at handover before you accept it.']
 ];
-const orderThumb = o => `<div class="thumb"><div class="tile ${o.bg}">${art(o.art, o.pal)}</div></div>`;
+const orderThumb = o => `<div class="thumb"><div class="tile ${o.bg}">${media(o)}</div></div>`;
 
 screens.orders = () => ({
   tabs: true, tone: 'sand',
@@ -1259,7 +1288,7 @@ screens.track = id => {
 
 const evidenceHtml = o => {
   const n = o.issuePhotos || 0, views = ['defects', 'label', 'front'];
-  return Array.from({ length: n }, (_, i) => `<figure class="ev"><div class="tile deep">${art(o.art, o.pal, views[i], { defect: 'mark', brand: o.brand, size: o.size })}</div><figcaption>Photo ${i + 1}</figcaption></figure>`).join('') +
+  return Array.from({ length: n }, (_, i) => `<figure class="ev"><div class="tile deep">${media({ ...o, defect: 'mark' }, views[i])}</div><figcaption>Photo ${i + 1}</figcaption></figure>`).join('') +
     (n < 3 ? `<button class="ev-add" type="button" data-act="issue-photo" data-id="${o.id}">${ic('camera')}<span>Add photo</span></button>` : '');
 };
 const ISSUE_REASONS = ['The item does not match its listing', 'A problem with collection or delivery', 'A problem with payment or my refund', 'Something else'];
@@ -1299,7 +1328,7 @@ function slotsHtml() {
   const d = state.draft;
   return SLOTS.map(sl => sl[0] === 'defects' && d.noDefects ? ['defects', 'Fabric close-up', 'No visible defects: show the fabric up close', 'gDefect'] : sl).map(([k, n, hint, g]) => d.photos[k]
     ? `<button class="slot filled ${k === 'label' || k === 'defects' ? 'deep' : ''}" type="button" data-act="slot" data-v="${k}" aria-label="${n} photo added. Tap to remove" style="background:${k === 'label' || k === 'defects' ? 'var(--sand-deep)' : 'var(--maroon-wash)'}">
-        ${art(d.art, d.pal, k, { brand: d.brand, size: d.size, defect: d.defect })}
+        ${media({ art: d.art, pal: d.pal, photo: d.photo, title: d.title, brand: d.brand, size: d.size, defect: d.defect }, k)}
         <span class="sewn">${ic('check', 'xs')}${n.replace('Clothing label', 'Label').replace('Visible defects', 'Defects').replace('Fabric close-up', 'Fabric')}</span></button>`
     : `<button class="slot" type="button" data-act="slot" data-v="${k}" aria-label="Add ${n} photo">
         ${ic(g, 'guide')}<b>${n}</b><span>${hint}</span><span class="add">${ic('plus', 'xs')}Add photo</span></button>`).join('');
@@ -1408,7 +1437,7 @@ screens.sell = () => {
       ${state.mine.map(m => `
         <div class="panel">
           <div class="listing">
-            <div class="thumb"><div class="tile ${m.bg}">${art(m.art, m.pal)}</div></div>
+            <div class="thumb"><div class="tile ${m.bg}">${media(m)}</div></div>
             <div class="t"><b>${esc(m.title)}</b><span class="muted">${esc(m.brand)} · Size ${esc(m.size)} · <span class="num">${qar(m.price)}</span></span><br>
               <span class="pill ${m.status}">${STATUS[m.status]}</span>
               ${m.status === 'no' && m.reason ? `<p class="small muted" style="margin-top:6px">Reason: ${esc(m.reason)}</p>` : ''}
@@ -1484,7 +1513,7 @@ function queueHtml() {
   return state.queue.map(q => `
     <article class="panel review" id="rev-${q.id}">
       <div class="photos">
-        ${SHOTS.map(([v, n]) => `<figure><div class="tile ${v === 'front' || v === 'back' ? q.bg : 'deep'}">${art(q.art, q.pal, v, q)}</div><figcaption>${n}</figcaption></figure>`).join('')}
+        ${SHOTS.map(([v, n]) => `<figure><div class="tile ${v === 'front' || v === 'back' ? q.bg : 'deep'}">${media(q, v)}</div><figcaption>${n}</figcaption></figure>`).join('')}
       </div>
       <h2>${esc(q.title)}</h2>
       <p class="muted small">${esc(q.seller)} · ${esc(q.area)} · <span class="num">${qar(q.price)}</span></p>
@@ -1597,7 +1626,7 @@ const actions = {
   'shot': el => { const c = $('#carousel'); c.scrollTo({ left: c.clientWidth * Number(el.dataset.v), behavior: 'smooth' }); $$('.shots button').forEach(b => b.setAttribute('aria-pressed', String(b === el))); },
   'place-order': el => {
     const it = byId(el.dataset.id), c = state.checkout;
-    const o = { id: 'RL-' + (++state.orderSeq), title: it.title, brand: it.brand, size: it.size, art: it.art, pal: it.pal, bg: it.bg, area: it.area,
+    const o = { id: 'RL-' + (++state.orderSeq), title: it.title, brand: it.brand, size: it.size, art: it.art, pal: it.pal, bg: it.bg, photo: it.photo, area: it.area,
       addr: c.addr, km: roadKm(it.area, c.addr), price: it.price, itemPay: c.itemPay, feePay: c.feePay, step: 0, times: [timeNow()], issue: false };
     state.orders.unshift(o); it.sold = true;
     go('track/' + o.id); toast('Order placed. Delivery fee paid.');
@@ -1637,9 +1666,9 @@ const actions = {
     if (photoCount() < 4) { d.photoError = true; go('sell/photos'); return; }
     const price = round2(Number(d.price)), id = 'm' + (state.mineSeq++);
     const meas = `Chest ${d.chest} cm, length ${d.length} cm (laid flat)`;
-    state.mine.unshift({ id, title: d.title.trim(), brand: d.brand.trim(), size: d.size.trim(), price, status: 'wait', art: d.art, pal: d.pal, bg: d.bg });
+    state.mine.unshift({ id, title: d.title.trim(), brand: d.brand.trim(), size: d.size.trim(), price, status: 'wait', art: d.art, pal: d.pal, bg: d.bg, photo: d.photo });
     state.queue.unshift({ id: 'q' + id, mineId: id, title: d.title.trim(), brand: d.brand.trim(), size: d.size.trim(), cond: d.cond, price, area: d.area, cat: d.cat,
-      seller: 'Demo account', meas, defect: d.defect.trim(), art: d.art, pal: d.pal, bg: d.bg, rejecting: false });
+      seller: 'Demo account', meas, defect: d.defect.trim(), art: d.art, pal: d.pal, bg: d.bg, photo: d.photo, rejecting: false });
     state.lastSubmitted = { title: d.title.trim(), price };
     state.draft = freshDraft();
     go('sell/done');
@@ -1650,7 +1679,7 @@ const actions = {
     state.queue = state.queue.filter(x => x !== q);
     const mine = state.mine.find(m => m.id === q.mineId); if (mine) mine.status = 'live';
     state.listings.unshift({ id: 'new-' + q.id, title: q.title, cat: q.cat, brand: q.brand, size: q.size, sg: ['S', 'M', 'L'].includes(q.size) ? q.size : /year/.test(q.size) ? 'kids' : 'numbered',
-      cond: q.cond, price: q.price, area: q.area, seller: { name: q.seller, rating: 4.7, sales: 1 }, meas: q.meas, defect: q.defect, art: q.art, pal: q.pal, bg: q.bg });
+      cond: q.cond, price: q.price, area: q.area, seller: { name: q.seller, rating: 4.7, sales: 1 }, meas: q.meas, defect: q.defect, art: q.art, pal: q.pal, bg: q.bg, photo: q.photo });
     render(true); toast('Approved. The listing is now live.');
   },
   'reject': el => { state.queue.forEach(x => x.rejecting = x.id === el.dataset.id); render(true); },
