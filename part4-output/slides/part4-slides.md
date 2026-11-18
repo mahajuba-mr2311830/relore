@@ -103,5 +103,5 @@ Each metric answers one question. Listings submitted shows whether sellers will 
 
 - The word "driver" always means a Relore driver employed by the company, never a team member.
 - Commission is 20% everywhere. The older group deck still says 10% on two slides (see the README).
-- If the group decides who pays to return a declined item, update the slides and the prototype together.
+- Declined items: the buyer gets a full refund including the delivery fee, which is taken from the seller's next payout (Relore covers it if there is none). Say this if asked.
 - The delivery fee can be paid by card, Apple Pay or Fawran, and is always paid before a driver is sent.

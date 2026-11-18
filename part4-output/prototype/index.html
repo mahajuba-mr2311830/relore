@@ -120,7 +120,7 @@ img, svg { display: block; }
 .facts dt { color: var(--ink-soft); }
 .facts dd { font-weight: 600; text-align: right; }
 .facts .stack { display: block; }
-.facts .stack dd { text-align: left; color: var(--wait); }
+.facts .stack dd { text-align: left; }
 
 .phone-wrap { width: 414px; }
 .phone {
@@ -649,16 +649,14 @@ function qar(n, dp) {
 }
 const pct = r => Math.round(r * 100) + '%';
 
-/* Undecided group policy: edit this one line when the group decides. */
-const POLICY_TBC = '[Policy to be confirmed]';
-
+/* Item-problem policy (agreed by the group on 17 Nov 2026). Every screen reads its wording from here. */
 const POLICY = Object.freeze({
-  buyer: 'There are no general returns. If an item does not match its listing, you can decline it at handover and you will get a refund.',
-  seller: 'If a buyer declines your item because it does not match its listing, you receive penalty points and a lower seller rating. Relore reviews each case and asks for your side first. Repeated or deliberate misrepresentation leads to a permanent ban, linked to your Qatar ID.',
+  buyer: 'There are no general returns. If an item does not match its listing, you can decline it at handover and get a full refund, including the delivery fee.',
+  seller: 'If a buyer declines your item because it does not match its listing, the buyer’s delivery fee is taken from your next payout, and you receive penalty points and a lower seller rating. Relore reviews each case and asks for your side first. Repeated or deliberate misrepresentation leads to a permanent ban, linked to your Qatar ID.',
   sellerShort: 'The seller receives penalty points and a lower rating. Repeated or deliberate misrepresentation leads to a permanent ban, linked to their Qatar ID.',
   legal: 'This does not affect your legal rights as a consumer in Qatar.',
-  returnCostLabel: 'Who pays to return a declined item to the seller',
-  returnCost: POLICY_TBC
+  returnCostLabel: 'Who pays the delivery fee when an item is declined',
+  returnCost: 'The seller, from their next payout. If they have no payouts left, Relore covers it.'
 });
 
 const BRAND = Object.freeze({
@@ -956,7 +954,6 @@ const byId = id => state.listings.find(l => l.id === id);
 const firstAvailable = () => state.listings.find(l => !l.sold) || state.listings[0];
 const addr = id => ADDRESSES.find(a => a.id === id);
 const timeNow = () => 'Today, ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-const tbc = () => `<span class="tbc">${esc(POLICY_TBC)}</span>`;
 
 let toastTimer;
 function toast(msg) {
@@ -977,7 +974,7 @@ const topbar = (title, backTo, opts = {}) => `
 const policyBlock = () => `
   <div class="note-strip">${ic('shield')}
     <div><p>${esc(POLICY.buyer)}</p>
-    <p class="small" style="margin-top:6px">${esc(POLICY.returnCostLabel)}: ${tbc()}</p>
+    <p class="small" style="margin-top:6px"><b>${esc(POLICY.returnCostLabel)}:</b> ${esc(POLICY.returnCost)}</p>
     <p class="small muted" style="margin-top:6px">${esc(POLICY.legal)}</p></div>
   </div>`;
 
@@ -1491,7 +1488,7 @@ screens.profile = () => ({
 
     <h2 class="section-title">Frequently asked questions</h2>
     <div class="panel faq" style="padding:4px 16px">
-      ${FAQS().map(([q, ps], i) => `<details ${i === 0 ? 'open' : ''}><summary>${q}${ic('down', 'sm')}</summary>${ps.map(p => `<p>${esc(p).replace(esc(POLICY_TBC), tbc())}</p>`).join('')}</details>`).join('')}
+      ${FAQS().map(([q, ps], i) => `<details ${i === 0 ? 'open' : ''}><summary>${q}${ic('down', 'sm')}</summary>${ps.map(p => `<p>${esc(p)}</p>`).join('')}</details>`).join('')}
     </div>
 
     <h2 class="section-title">Relore team</h2>
@@ -1771,10 +1768,10 @@ $('#facts').innerHTML = `
   <div><dt>Delivery fee</dt><dd>${qar(FEES.deliveryBase)} + ${qar(FEES.deliveryPerKm, 2)} per km</dd></div>
   <div><dt>Example: 12 km</dt><dd>${qar(deliveryFee(12), 2)} delivery</dd></div>
   <div><dt>Example: ${qar(150)} sale</dt><dd>Seller receives ${qar(sellerPayout(150))}</dd></div>
-  <div class="stack"><dt>Cost of returning a declined item</dt><dd>${esc(POLICY_TBC)}</dd></div>`;
+  <div class="stack"><dt>Declined item: delivery fee paid by</dt><dd>The seller, from their next payout</dd></div>`;
 
 /* Exposed for the automated checks in part4-output/tools. */
-window.Relore = { FEES, deliveryFee, commission, sellerPayout, orderTotals, qar, state, go, POLICY_TBC };
+window.Relore = { FEES, deliveryFee, commission, sellerPayout, orderTotals, qar, state, go, POLICY };
 
 fit();
 render(false);

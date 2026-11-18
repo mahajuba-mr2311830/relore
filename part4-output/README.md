@@ -193,27 +193,21 @@ I did not open the photographs inside `Relore_Final.pptx` (34 image files). My b
 
 ## 6. Decisions still needed
 
-### Marked "[Policy to be confirmed]"
+### The item-problem policy (settled 17 November)
 
-**Who pays to return a declined item to the seller.** The text lives in one place: the line `const POLICY_TBC = '[Policy to be confirmed]';` near the top of the script in `prototype/index.html`. Change that one line and it updates everywhere it is shown:
+The "[Policy to be confirmed]" placeholder is gone. The agreed rule:
 
-- Item details, under Delivery
-- Checkout, "If there is a problem with the item"
-- Order tracking
-- Report an issue
-- Profile / help, the FAQ "What if the item is not as described?"
-- The desktop side panel, "Fees in this prototype"
+- The delivery fee is paid upfront, even for cash on delivery.
+- If the item matches its listing, the purchase is final. There are no change-of-mind returns.
+- If it does not match, the buyer declines it at handover and gets a **full refund, including the delivery fee**.
+- That delivery fee is **taken from the seller's next payout**. If the seller has no payouts left, Relore covers it.
+- The seller also gets penalty points and a lower rating, and repeated or deliberate misrepresentation means a ban linked to their Qatar ID.
 
-It does not appear in the slides or the pitch script. The slides file has a reminder to update it once decided.
+The wording lives in one place, the `POLICY` block near the top of the script in `prototype/index.html`, and every screen reads from it: item details, checkout, order tracking, Report an issue, Sell step 2, the seller dashboard, the FAQ and the desktop side panel.
 
-**What the group has already agreed (13 to 17 November):** the delivery fee is paid upfront, even for cash on delivery. If the item matches its listing, the purchase is final. If it does not match, the buyer is refunded and the seller is penalised. The prototype now says all of this.
-
-**Still open:**
-- Whether the refund includes the buyer's **delivery fee**. This was proposed and supported, but not confirmed.
-- Who pays for the **trip back to the seller**: Relore, or the seller (for example from their next payout)? Raised, but not answered yet.
-- Whether a declined item goes **back to the seller or is relisted** (raised in the feasibility document).
-
-The prototype says only "you will get a refund", without saying what the refund covers.
+**Still open, but minor:**
+- Whether a declined item goes **back to the seller or is relisted** (raised in the feasibility document). The prototype assumes it goes back to the seller.
+- The cost of the driver's trip back to the seller isn't charged separately. Only the buyer's delivery fee is recovered from the seller.
 
 ### Placeholders I wrote that the group should confirm or replace
 
@@ -221,7 +215,7 @@ The prototype says only "you will get a refund", without saying what the refund 
 |---|---|---|
 | Tagline | "Pre-owned clothing, reviewed and delivered." No tagline appears in any group file, so this is my wording. | `BRAND.tagline` in `prototype/index.html`. Also the last line of the pitch script and teleprompter. |
 | WhatsApp Business number | +974 0000 0000 (placeholder). The real number isn't needed yet, so the placeholder can stay for the presentation. | `BRAND.whatsappDisplay` and `BRAND.whatsappLink` in `prototype/index.html`. |
-| Investment ask | No amount. The script says "fund our first driver, vehicle and launch". From the BMC PDF's table, year-one operating losses add up to about QAR 39,000 (3 × 6,037 + 3 × 4,592 + 6 × 1,220), before app development and launch marketing. | `pitch/video-script.md` and `pitch/teleprompter.html`. |
+| Investment ask | No amount yet. The script says "fund our first driver, vehicle and launch". The group agreed the ask = year-one operating losses from the BMC PDF (about QAR 39,000: 3 × 6,037 + 3 × 4,592 + 6 × 1,220) plus one-off setup costs (licence, building the app, launch marketing). The final figure comes from the funding section. | `pitch/video-script.md` and `pitch/teleprompter.html`. |
 | Speaker names | Speaker 1 to Speaker 5. | Same two files. |
 | Pivot-or-persevere thresholds | 30+ orders a month by month 3 (the BMC's planning target), 30%+ of listings sold in 30 days, 25%+ of buyers ordering again, pivot if delivery costs exceed the fee. All labelled as assumptions. | `tools/build-mindmap.js` (content at the top), then rebuild. Also slide 4 notes. |
 | Condition scale | Like new, Very good, Good, Fair. The brief asks for "a condition rating" but gives no scale. | `CONDITIONS` in `prototype/index.html`. |
@@ -231,13 +225,11 @@ The prototype says only "you will get a refund", without saying what the refund 
 
 ### Questions to ask the group
 
-1. If an item doesn't match its listing, is the buyer's delivery fee refunded too, and who pays for the trip back to the seller?
-2. Are we using the button logo (and the maroon, Jost look) for the whole deck?
-3. Which break-even figure do we present: 9 orders a day (BMC PDF) or 102 a month (the earlier estimate)?
-4. How much are we asking investors for?
-5. Who is Speaker 1 to 5 in the video?
-6. How do we answer the survey finding that most respondents would not accept QAR 15 delivery or 20% commission?
-7. The brief says "TikTok Reels". Reels is Instagram's name; TikTok calls them videos. The mind-map follows the brief. Change it if the group prefers.
+1. Which break-even figure do we present: 9 orders a day (BMC PDF) or 102 a month (the earlier estimate)?
+2. What is the final investment figure (year-one losses plus setup costs)?
+3. Who is Speaker 1 to 5 in the video?
+4. How do we answer the survey finding that most respondents would not accept QAR 15 delivery or 20% commission?
+5. The brief says "TikTok Reels". Reels is Instagram's name; TikTok calls them videos. The mind-map follows the brief. Change it if the group prefers.
 
 ---
 
@@ -254,5 +246,7 @@ These follow what the group agreed between 13 and 17 November.
 | Report an issue now takes up to 3 photos as evidence. | Report an issue | The group's policy notes (keep photo evidence). |
 | "This item has no visible defects" option: the 4th photo slot becomes a close-up of the fabric. | Sell step 1 | My own decision, to answer the open question about the 4th slot. |
 | WhatsApp number question dropped. | README | Not needed yet. |
+| "[Policy to be confirmed]" replaced: a declined item's buyer gets a full refund including the delivery fee, which is taken from the seller's next payout (Relore covers it if there is none). | Every screen with the policy, and the side panel | Group decision, 17 Nov. |
+| Logo confirmed as the button version. | README | Group decision, 17 Nov. |
 
-Unchanged on purpose: the "[Policy to be confirmed]" text, the tagline, the speaker names and the mind-map thresholds, until the group answers.
+Unchanged on purpose: the tagline, the speaker names and the mind-map thresholds, until the group answers.

@@ -108,7 +108,7 @@ const eq = (name, got, want) => ok(name, JSON.stringify(got) === JSON.stringify(
   await page.locator('input[name="feePay"][value="applepay"]').check({ force: true }); await settle(page, 200);
   await page.locator('input[name="addr"][value="ec"]').check({ force: true }); await settle(page, 200);
   const coText = await text('#view');
-  ok('Checkout states the item-problem policy', coText.includes('no general returns') && coText.includes('decline it at handover') && coText.includes('[Policy to be confirmed]') && coText.includes('legal rights'));
+  ok('Checkout states the item-problem policy', coText.includes('no general returns') && coText.includes('decline it at handover') && coText.includes('including the delivery fee') && coText.includes('from their next payout') && !coText.includes('[Policy to be confirmed]') && coText.includes('legal rights'));
   await tap('[data-act="place-order"]');
   ok('Place order opens Order tracking', (await hash()).startsWith('#/track/RL-'), await hash());
   eq('Tracking has the 4 steps', await page.locator('.steps b').allInnerTexts(), ['Order placed', 'Collected from seller', 'Out for delivery', 'Delivered']);
