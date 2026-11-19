@@ -89,9 +89,9 @@ Each metric answers one question. Listings submitted shows whether sellers will 
 
 ### Pitch slide 2. How it works and how we earn
 
-**On-slide text (13 words):**
+**On-slide text (14 words):**
 > List. Review. Order. Deliver.
-> 20% commission, plus a delivery fee from QAR 15.
+> 20% commission. Delivery from QAR 15, free from QAR 150.
 
 **One strong visual:** a single row of four phone screens, left to right, one under each word: `07a-sell-step1-photo-guides.png` (List), `10-admin-review-queue.png` (Review), `05a-checkout-delivery-fee.png` (Order), `06b-order-tracking-out-for-delivery.png` (Deliver).
 
@@ -103,5 +103,8 @@ Each metric answers one question. Listings submitted shows whether sellers will 
 
 - The word "driver" always means a Relore driver employed by the company, never a team member.
 - Commission is 20% everywhere. The older group deck still says 10% on two slides (see the README).
-- Declined items: the buyer gets a full refund including the delivery fee, which is taken from the seller's next payout (Relore covers it if there is none). Say this if asked.
+- Payment: the buyer pays only the delivery fee when ordering, and pays for the item at handover after checking it (card, cash or Fawran).
+- Free delivery on single-seller orders of QAR 150 or more. Relore absorbs the fee.
+- Declined items: the buyer pays nothing for the item and gets the delivery fee back. Relore refunds it straight away and recovers it from the seller's next sale. If the buyer declines an item that does match its listing, the fee is not refunded. Say this if asked.
+- Canva: on the "How It Works" pitch slide, change the caption "Order: delivery from QAR 15" to "Order: prepay delivery" (delivery can now be free).
 - The delivery fee can be paid by card, Apple Pay or Fawran, and is always paid before a driver is sent.

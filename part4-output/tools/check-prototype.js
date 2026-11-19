@@ -30,10 +30,10 @@ const eq = (name, got, want) => ok(name, JSON.stringify(got) === JSON.stringify(
     return {
       fee0: R.deliveryFee(0), fee5: R.deliveryFee(5), fee10: R.deliveryFee(10), fee12: R.deliveryFee(12), fee20: R.deliveryFee(20), fee7_5: R.deliveryFee(7.5),
       com150: R.commission(150), pay150: R.sellerPayout(150), com45: R.commission(45), pay45: R.sellerPayout(45), com380: R.commission(380), pay380: R.sellerPayout(380), pay25: R.sellerPayout(25),
-      card: R.orderTotals(45, 12, 'card'), cod: R.orderTotals(45, 12, 'cod'), fees: R.FEES
+      o45: R.orderTotals(45, 12), o149: R.orderTotals(149, 12), o150: R.orderTotals(150, 12), o380: R.orderTotals(380, 19), fees: R.FEES
     };
   });
-  eq('FEES constants', maths.fees, { deliveryBase: 15, deliveryPerKm: 0.8, commissionRate: 0.2 });
+  eq('FEES constants', maths.fees, { deliveryBase: 15, deliveryPerKm: 0.8, commissionRate: 0.2, freeDeliveryFrom: 150 });
   eq('Delivery 0 km = QAR 15.00', maths.fee0, 15);
   eq('Delivery 5 km = QAR 19.00', maths.fee5, 19);
   eq('Delivery 10 km = QAR 23.00 (matches the BMC PDF)', maths.fee10, 23);
@@ -44,8 +44,13 @@ const eq = (name, got, want) => ok(name, JSON.stringify(got) === JSON.stringify(
   eq('QAR 45 sale: commission 9, seller receives 36', [maths.com45, maths.pay45], [9, 36]);
   eq('QAR 380 sale: commission 76, seller receives 304', [maths.com380, maths.pay380], [76, 304]);
   eq('QAR 25 sale: seller receives 20', maths.pay25, 20);
-  eq('Order QAR 45 + 12 km, item by card', maths.card, { item: 45, delivery: 24.6, total: 69.6, payNow: 69.6, payOnDelivery: 0 });
-  eq('Order QAR 45 + 12 km, cash on delivery', maths.cod, { item: 45, delivery: 24.6, total: 69.6, payNow: 24.6, payOnDelivery: 45 });
+  eq('Order QAR 45 + 12 km: pay QAR 24.60 now, QAR 45 at handover', maths.o45, { item: 45, fullDelivery: 24.6, freeDelivery: false, delivery: 24.6, total: 69.6, payNow: 24.6, payAtHandover: 45 });
+  eq('Order QAR 149 + 12 km: just under the threshold, delivery charged', [maths.o149.freeDelivery, maths.o149.payNow], [false, 24.6]);
+  eq('Order QAR 150 + 12 km: free delivery, nothing to pay now', [maths.o150.freeDelivery, maths.o150.delivery, maths.o150.payNow, maths.o150.total], [true, 0, 0, 150]);
+  eq('Order QAR 380 + 19 km: QAR 30.20 fee waived', [maths.o380.fullDelivery, maths.o380.delivery], [30.2, 0]);
+
+  await open(page, 'checkout/blazer'); await settle(page, 300);
+  ok('A QAR 380 item shows free delivery at checkout, with nothing to pay now', (await text('#feeResult')) === 'Free' && (await text('#cta')) === 'nothing to pay now' && (await text('#sumHandover')) === 'QAR 380.00' && !(await page.locator('input[name="feePay"]').count()));
 
   /* ---------- 2. Buyer flow ---------- */
   console.log('\n== 2. Buyer flow ==');
@@ -98,18 +103,19 @@ const eq = (name, got, want) => ok(name, JSON.stringify(got) === JSON.stringify(
   ok('Checkout shows the formula', (await text('#feeFormula')).replace(/\s+/g, ' ') === 'QAR 15 + 12 km × QAR 0.80', await text('#feeFormula'));
   await page.locator('input[name="addr"][value="wb"]').check({ force: true }); await settle(page, 200);
   eq('Changing the address recalculates the fee live (7 km)', await text('#feeResult'), 'QAR 20.60');
-  eq('Pay-now total follows (45 + 20.60)', await text('#cta'), 'QAR 65.60');
-  await page.locator('input[name="itemPay"][value="cod"]').check({ force: true }); await settle(page, 200);
-  eq('Cash on delivery: only the delivery fee is paid now', await text('#cta'), 'QAR 20.60');
-  eq('Cash on delivery amount shown', await text('#sumCod'), 'QAR 45.00');
+  eq('Only the delivery fee is paid now', await text('#cta'), 'QAR 20.60');
+  await page.locator('input[name="itemPay"][value="card"]').check({ force: true }); await settle(page, 200);
+  eq('The item is paid at handover', await text('#sumHandover'), 'QAR 45.00');
+  ok('Handover payment method follows the choice', (await text('#checkoutForm')).includes('Pay at handover by card'));
   await page.locator('input[name="feePay"][value="fawran"]').check({ force: true }); await settle(page, 200);
   ok('Fawran can be chosen for the delivery fee', (await text('#sumNow')) === 'QAR 20.60' && (await text('#checkoutForm')).includes('Pay now by Fawran'));
   ok('Checkout says a driver is sent only once the delivery fee is paid', (await text('#checkoutForm')).includes('only once the delivery fee is paid'));
   await page.locator('input[name="feePay"][value="applepay"]').check({ force: true }); await settle(page, 200);
   await page.locator('input[name="addr"][value="ec"]').check({ force: true }); await settle(page, 200);
   const coText = await text('#view');
-  ok('Checkout states the item-problem policy', coText.includes('no general returns') && coText.includes('decline it at handover') && coText.includes('including the delivery fee') && coText.includes('from their next payout') && !coText.includes('[Policy to be confirmed]') && coText.includes('legal rights'));
+  ok('Checkout states the item-problem policy', coText.includes('no general returns') && coText.includes('pay for the item at handover') && coText.includes('delivery fee is refunded') && coText.includes('not refunded') && coText.includes('seller\u2019s next sale') && !coText.includes('including the delivery fee') && !coText.includes('[Policy to be confirmed]') && coText.includes('legal rights'));
   await tap('[data-act="place-order"]');
+  ok('Order tracking says the item is paid at handover', (await text('#view')).includes('to pay at handover by card'));
   ok('Place order opens Order tracking', (await hash()).startsWith('#/track/RL-'), await hash());
   eq('Tracking has the 4 steps', await page.locator('.steps b').allInnerTexts(), ['Order placed', 'Collected from seller', 'Out for delivery', 'Delivered']);
   for (let i = 0; i < 3; i++) await tap('[data-act="advance"]');

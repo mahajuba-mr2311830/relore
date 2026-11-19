@@ -14,7 +14,7 @@ Work for Part 4 of the CMPS307 group project (due Wednesday 18 November 2026, pr
 |---|---|---|
 | `prototype/index.html` | The clickable app prototype. One HTML file with all ten screens, the styling and the code. | **Presentation** (live demo) and **submission zip**. Screen-record it for the pitch video. |
 | `prototype/assets/` | Copies of the logo and favicon files the prototype uses. Must stay next to `index.html`. | **Submission zip**, with the prototype. |
-| `screenshots/` | 22 PNGs: every screen at phone size (390 × 844, scale 3), numbered in flow order, plus one desktop view. | **Canva decks** (see `slides/part4-slides.md` for which image goes on which slide) and **submission zip**. |
+| `screenshots/` | 23 PNGs: every screen at phone size (390 × 844, scale 3), numbered in flow order, plus one desktop view. | **Canva decks** (see `slides/part4-slides.md` for which image goes on which slide) and **submission zip**. |
 | `mindmap/mindmap.png` | The mind-map "Testing Relore's MVPs", 3840 × 2160. | **Canva detailed deck**, slide 3. |
 | `mindmap/mindmap.pdf` | The same mind-map as a sharp, single-page PDF. | **Submission zip**. Also uploads to Canva. |
 | `mindmap/mindmap.svg` | Editable source of the mind-map. Opens in a browser, Inkscape, Illustrator or Figma. | Keep for edits. Include in the zip if sources are wanted. |
@@ -53,7 +53,7 @@ It works offline. Only the Jost font needs the internet (it comes from Google Fo
 | 2 | Home / browse (search, category chips, size filter, 12 reviewed listings) | `02-home-browse.png` |
 | 3 | Item details (4-photo carousel, specifications, seller rating) | `03a`, `03b` |
 | 4 | Chat | `04-chat.png` |
-| 5 | Checkout (live delivery fee, payment choices, item-problem policy) | `05a`, `05b` |
+| 5 | Checkout (live delivery fee, free delivery from QAR 150, payment choices, item-problem policy) | `05a`, `05b`, `05c` |
 | 6 | Order tracking, and Report an issue | `06a`, `06b`, `06c` |
 | 7 | Sell, steps 1 to 3 | `07a` to `07e` |
 | 8 | Seller dashboard (statuses and earnings breakdown) | `08a`, `08b` |
@@ -120,9 +120,9 @@ Colours also live in one place: the `:root` block at the top of `prototype/index
 
 ## 4. Checks carried out
 
-### Automated (`tools/check-prototype.js`): 98 of 98 passed
+### Automated (`tools/check-prototype.js`): 102 of 102 passed
 
-- **Buyer flow** clicked through: splash → Home → search, category and size filters → item details → photo carousel → chat (message sent) → checkout (address and payment changed, including Fawran) → order placed → tracking advanced to Delivered → issue reported with 3 photos → Orders.
+- **Buyer flow** clicked through: splash → Home → search, category and size filters → item details → photo carousel → chat (message sent) → checkout (address and payment changed, including Fawran; free delivery on a QAR 380 item) → order placed → tracking advanced to Delivered → issue reported with 3 photos → Orders.
 - **Seller and admin flow** clicked through: dashboard → step 1 (error shown when photos are missing, "no visible defects" option) → step 2 (error shown when the price is missing) → step 3 → dashboard → Profile → FAQs → admin queue → Approve, and Reject with a reason → listing live on Home.
 - **No dead buttons:** 313 controls on 14 screens each have a working action. All four tabs and all 12 Demo-menu entries navigate.
 - **Layout** at 360 × 740, 390 × 844 and 430 × 932: no sideways scrolling, nothing off-screen, no clipped button text, action bars always visible, logos above minimum size and not stretched.
@@ -132,7 +132,7 @@ I also looked through every screenshot and fixed what I found: a wrapping "Chat 
 
 ### Maths: worked examples
 
-All amounts come from four shared functions at the top of the script in `prototype/index.html`: `deliveryFee(km)`, `commission(price)`, `sellerPayout(price)` and `orderTotals(price, km, itemPay)`. They read one `FEES` block (base QAR 15, QAR 0.80 per km, 20%).
+All amounts come from four shared functions at the top of the script in `prototype/index.html`: `deliveryFee(km)`, `commission(price)`, `sellerPayout(price)` and `orderTotals(price, km)`. They read one `FEES` block (base QAR 15, QAR 0.80 per km, 20%, free delivery from QAR 150).
 
 **Delivery fee = QAR 15 + QAR 0.80 × road km**
 
@@ -153,12 +153,16 @@ All amounts come from four shared functions at the top of the script in `prototy
 | QAR 150 | QAR 30 | QAR 120 (the brief's example, shown on the dashboard) |
 | QAR 380 | QAR 76 | QAR 304 |
 
-**Whole order: linen shirt at QAR 45, delivered 12 km**
+**Whole order: delivery fee paid when ordering, item paid at handover**
 
-| Item paid by | Pay now | Pay on delivery | Total |
-|---|---|---|---|
-| Card | 45.00 + 24.60 = QAR 69.60 | QAR 0 | QAR 69.60 |
-| Cash on delivery | QAR 24.60 (delivery fee only) | QAR 45.00 | QAR 69.60 |
+The buyer pays only the delivery fee in the app (card, Apple Pay or Fawran). The item is paid at handover, after the buyer has checked it (card, cash or Fawran). Single-seller orders of QAR 150 or more get free delivery, and Relore absorbs the fee.
+
+| Order | Delivery | Pay now | Pay at handover | Total |
+|---|---|---|---|---|
+| Linen shirt, QAR 45, 12 km | 15 + 12 × 0.80 = QAR 24.60 | QAR 24.60 | QAR 45.00 | QAR 69.60 |
+| Item at QAR 149, 12 km | QAR 24.60 (just under the threshold) | QAR 24.60 | QAR 149.00 | QAR 173.60 |
+| Item at QAR 150, 12 km | Free (QAR 24.60 waived) | QAR 0 | QAR 150.00 | QAR 150.00 |
+| Tailored blazer, QAR 380, 19 km | Free (QAR 30.20 waived) | QAR 0 | QAR 380.00 | QAR 380.00 |
 
 ### Wording
 British English throughout, prices as "QAR", one set of terms (pre-owned, listing, reviewed, collect / collection, delivery fee, commission, decline at handover). Place names are real Doha-area names: Al Sadd, Lusail, Al Rayyan, Al Wakrah, The Pearl, West Bay, Education City, Al Gharrafa.
@@ -175,11 +179,11 @@ I followed the facts in my brief wherever a file disagreed. These need raising w
 | # | File | What it says | What I used | Action |
 |---|---|---|---|---|
 | 1 | `Relore_Final.pptx`, slides 5 and 6 | "Relore keeps a **10%** commission" and "10% COMMISSION". | 20%. | **Check the Canva deck.** The group has confirmed 20%, and the 10% is a leftover from an earlier draft. |
-| 2 | An earlier group estimate vs `Relore_BMC_Growth_Delivery_Rate_Final.pdf`, page 12 | Earlier estimate: break-even at about **102 orders a month**, assuming delivery fees fully cover transport costs. The final BMC PDF: break-even with one driver at **9 orders a day** (26 working days). The PDF's own inputs give 7,000 ÷ 32.11 ≈ **218 orders a month**, and its growth table agrees. | The PDF's figure, as instructed: "about nine orders a day" with one driver, in the pitch script. | **Agree one number.** I could not reproduce 102 from the PDF's inputs. |
+| 2 (resolved 18 Nov: 9 a day) | An earlier group estimate vs `Relore_BMC_Growth_Delivery_Rate_Final.pdf`, page 12 | Earlier estimate: break-even at about **102 orders a month**, assuming delivery fees fully cover transport costs. The final BMC PDF: break-even with one driver at **9 orders a day** (26 working days). The PDF's own inputs give 7,000 ÷ 32.11 ≈ **218 orders a month**, and its growth table agrees. | The PDF's figure, as instructed: "about nine orders a day" with one driver, in the pitch script. | **Resolved.** The BMC author confirmed 9 orders a day, which the pitch already uses. |
 | 3 | `Relore_Final.pptx` and the BMC PDF vs the logo guidelines | The deck uses dark red `#7A0000`, cream `#FFFCE2` and the fonts TT Chocolates and Lovelace. The BMC PDF is green, with "R E L O R E" typed as text. | Guideline colours, Jost and the supplied logo files. | Bring both documents in line with the guidelines (never retype the wordmark). |
 | 4 | Deck slides 8, 12, 13, 15 and BMC page 6 | Future growth: **rentals, direct resale and donations**. | My brief says the only future features are AI-assisted listing checks and clothing borrowing. I mention no future features. | Agree one list. |
 | 5 | BMC PDF, every page footer | "Qatar **peer-to-peer thrift** marketplace". | "Managed marketplace for pre-owned clothing in Qatar". | Agree one description. |
-| 6 | BMC PDF, pages 3, 4, 10 | Same-seller bundles, buyers leaving reviews, saved pickup addresses, and a pilot limited to Greater Doha (about 20 km). | None of these is in my brief, so the prototype has no bundles or review-writing. It shows a seller rating, as my brief asked. Some sample routes are longer than 20 km (for example Al Wakrah → Education City, 28 km). | Decide whether the pilot radius should limit which areas appear. |
+| 6 | BMC PDF, pages 3, 4, 10 | Same-seller bundles (now replaced by free delivery on single-seller orders of QAR 150 or more), buyers leaving reviews, saved pickup addresses, and a pilot limited to Greater Doha (about 20 km). | None of these is in my brief, so the prototype has no bundles or review-writing. It shows a seller rating, as my brief asked. Some sample routes are longer than 20 km (for example Al Wakrah → Education City, 28 km). | Decide whether the pilot radius should limit which areas appear. |
 | 7 | BMC PDF, page 3 | "Listing review does not mean physical inspection." | The prototype says listings are "reviewed by Relore" and that the team reviews the photos and details by hand. It never says items are inspected. | Keep this wording in all parts. |
 | 8 | `Relore_Market_Feasibility_Data.docx`, sections 4 and 6 | The survey (n = 29) suggests the fees are **above** what most respondents accept: the QAR 15 base fee exceeds the limit of 27 of 29, and at most 4 of 29 would accept 20% commission. | The pitch uses the survey only for what it supports (unclear condition 76%, trust in reviews and photos, Instagram and TikTok use). It does not claim the survey validates the fees. | Investors may ask. The feasibility document suggests answers: free delivery above an order value, bundles, or a lower commission. |
 | 9 | Feasibility document, section 6 | 48% of respondents want a return policy. Group decision: no returns at launch, buyers "can resell items on Relore". | No general returns, decline at handover, refund. I did not add the "resell" line because it is not in my brief. | Confirm whether to mention reselling. |
@@ -193,21 +197,22 @@ I did not open the photographs inside `Relore_Final.pptx` (34 image files). My b
 
 ## 6. Decisions still needed
 
-### The item-problem policy (settled 17 November)
+### Payment and the item-problem policy (settled 17 to 18 November)
 
-The "[Policy to be confirmed]" placeholder is gone. The agreed rule:
+- **Paying:** the buyer pays only the delivery fee when ordering (card, Apple Pay or Fawran), and Relore sends a driver only once it is paid. The item is paid at handover, after the buyer has checked it (card, cash or Fawran).
+- **Free delivery:** single-seller orders of QAR 150 or more. Relore absorbs the waived fee.
+- **No change-of-mind returns.** If the item matches its listing, the buyer pays for it. Declining a matching item means the delivery fee is not refunded.
+- **If it does not match its listing:** the buyer declines it, pays nothing for the item and gets the delivery fee back. Relore refunds it straight away and recovers it from the seller's next sale.
+- **The seller pays the delivery fee for that trip**, even on a free-delivery order. If a charge is more than their next payout, the rest carries over to later sales. They can keep listing while paying it off, and Relore shows what was deducted and why.
+- **Penalties:** penalty points and a lower rating. New listings are paused if the unpaid balance passes a set limit or there are several unresolved reports. Repeated or deliberate misrepresentation means a ban linked to the seller's Qatar ID.
+- **Evidence:** the driver photographs each item at collection, and Relore reviews each case and asks for the seller's side first.
 
-- The delivery fee is paid upfront, even for cash on delivery.
-- If the item matches its listing, the purchase is final. There are no change-of-mind returns.
-- If it does not match, the buyer declines it at handover and gets a **full refund, including the delivery fee**.
-- That delivery fee is **taken from the seller's next payout**. If the seller has no payouts left, Relore covers it.
-- The seller also gets penalty points and a lower rating, and repeated or deliberate misrepresentation means a ban linked to their Qatar ID.
-
-The wording lives in one place, the `POLICY` block near the top of the script in `prototype/index.html`, and every screen reads from it: item details, checkout, order tracking, Report an issue, Sell step 2, the seller dashboard, the FAQ and the desktop side panel.
+The wording lives in one place, the `POLICY` block near the top of the script in `prototype/index.html`, and every screen reads from it.
 
 **Still open, but minor:**
-- Whether a declined item goes **back to the seller or is relisted** (raised in the feasibility document). The prototype assumes it goes back to the seller.
-- The cost of the driver's trip back to the seller isn't charged separately. Only the buyer's delivery fee is recovered from the seller.
+- The "set limit" for pausing listings has no amount yet.
+- Whether a declined item goes **back to the seller or is relisted**. The prototype assumes it goes back to the seller.
+- Borrowing and giving items away are future features, so the prototype has no way for a lender to report damage to a borrowed item. Add a lender-side report if the group adds borrowing.
 
 ### Placeholders I wrote that the group should confirm or replace
 
@@ -225,11 +230,10 @@ The wording lives in one place, the `POLICY` block near the top of the script in
 
 ### Questions to ask the group
 
-1. Which break-even figure do we present: 9 orders a day (BMC PDF) or 102 a month (the earlier estimate)?
-2. What is the final investment figure (year-one losses plus setup costs)?
-3. Who is Speaker 1 to 5 in the video?
-4. How do we answer the survey finding that most respondents would not accept QAR 15 delivery or 20% commission?
-5. The brief says "TikTok Reels". Reels is Instagram's name; TikTok calls them videos. The mind-map follows the brief. Change it if the group prefers.
+1. What is the final investment figure (year-one losses plus setup costs)?
+2. Who is Speaker 1 to 5 in the video?
+3. What is the "set limit" of unpaid balance before a seller's listings are paused?
+4. The brief says "TikTok Reels". Reels is Instagram's name; TikTok calls them videos. The mind-map follows the brief. Change it if the group prefers.
 
 ---
 
@@ -248,5 +252,11 @@ These follow what the group agreed between 13 and 17 November.
 | WhatsApp number question dropped. | README | Not needed yet. |
 | "[Policy to be confirmed]" replaced: a declined item's buyer gets a full refund including the delivery fee, which is taken from the seller's next payout (Relore covers it if there is none). | Every screen with the policy, and the side panel | Group decision, 17 Nov. |
 | Logo confirmed as the button version. | README | Group decision, 17 Nov. |
+
+| Free delivery on single-seller orders of QAR 150 or more, shown at checkout, on item details, in the FAQ and in the pitch script. | Checkout, item details, FAQ, side panel, video script, teleprompter | Group decision, 18 Nov. |
+| The buyer pays only the delivery fee when ordering, and pays for the item at handover after checking it (card, cash or Fawran). The policy wording no longer says "full refund, including the delivery fee", which read as if the item price was refunded too. | Checkout, order tracking, FAQ, policy text | Group discussion, 18 Nov. |
+| A declined item's delivery fee is refunded by Relore straight away and recovered from the seller's next sale, with carry-over, a pause on listings past a limit, and a breakdown shown to the seller. Applies to free-delivery orders too. | Policy text, seller dashboard | Group decision, 18 Nov. |
+| The driver photographs each item at collection. | Order tracking | Group decision, 18 Nov. |
+| Break-even confirmed as 9 orders a day. | README | BMC author, 18 Nov. |
 
 Unchanged on purpose: the tagline, the speaker names and the mind-map thresholds, until the group answers.

@@ -23,6 +23,8 @@ fs.mkdirSync(OUT, { recursive: true });
   await tap('[data-go="chat/linen-shirt"]'); await shot('04-chat');
   await tap('.chat-item [data-go="checkout/linen-shirt"]'); await shot('05a-checkout-delivery-fee');
   await scrollTo('end'); await shot('05b-checkout-summary');
+  await open(page, 'checkout/blazer'); await settle(page); await scrollTo(470); await shot('05c-checkout-free-delivery');
+  await open(page, 'checkout/linen-shirt'); await settle(page);
   await tap('[data-act="place-order"]'); await settle(page, 2800); await shot('06a-order-tracking-placed');
   await tap('[data-act="advance"]'); await tap('[data-act="advance"]'); await settle(page, 2800); await shot('06b-order-tracking-out-for-delivery');
   await scrollTo('end'); await tap('[data-go^="issue/"]');

@@ -506,6 +506,8 @@ img.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
 .headline { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .headline b { font-size: 26px; font-weight: 700; color: var(--maroon); white-space: nowrap; }
 
+.standing { margin: 12px 0 0; padding: 10px 0 0 34px; border-top: 1px solid var(--sand-line); list-style: disc; display: grid; gap: 6px; font-size: 14px; color: var(--ink-soft); }
+.fee s { text-decoration-thickness: 1.5px; color: var(--ink-soft); }
 .check-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding: 12px 14px; background: var(--white); border-radius: var(--radius-sm); font-size: 14.5px; line-height: 1.35; cursor: pointer; }
 .check-row input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--maroon); cursor: pointer; }
 .evidence { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; margin-top: 4px; }
@@ -626,7 +628,8 @@ img.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
 const FEES = Object.freeze({
   deliveryBase: 15,       // QAR, flat part of the delivery fee
   deliveryPerKm: 0.80,    // QAR per km of road distance, seller's address to buyer's address
-  commissionRate: 0.20    // Relore commission on the sale price, deducted from the seller's payout
+  commissionRate: 0.20,   // Relore commission on the sale price, deducted from the seller's payout
+  freeDeliveryFrom: 150   // QAR: single-seller orders at or above this get free delivery (Relore absorbs the fee)
 });
 
 const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
@@ -636,11 +639,13 @@ function deliveryFee(km) { return round2(FEES.deliveryBase + FEES.deliveryPerKm 
 function commission(price) { return round2(price * FEES.commissionRate); }
 /** What the seller receives: the sale price less the commission (80%). */
 function sellerPayout(price) { return round2(price - commission(price)); }
-/** What the buyer pays, and when. itemPay is 'card' or 'cod' (cash on delivery). */
-function orderTotals(price, km, itemPay) {
-  const delivery = deliveryFee(km);
-  const payOnDelivery = itemPay === 'cod' ? price : 0;
-  return { item: price, delivery, total: round2(price + delivery), payNow: round2(price + delivery - payOnDelivery), payOnDelivery };
+/** Free delivery on single-seller orders of QAR 150 or more. */
+const isFreeDelivery = subtotal => subtotal >= FEES.freeDeliveryFrom;
+/** What the buyer pays, and when. The delivery fee is paid when ordering; the item is paid at handover, after the buyer has checked it. */
+function orderTotals(price, km) {
+  const fullDelivery = deliveryFee(km), freeDelivery = isFreeDelivery(price);
+  const delivery = freeDelivery ? 0 : fullDelivery;
+  return { item: price, fullDelivery, freeDelivery, delivery, total: round2(price + delivery), payNow: delivery, payAtHandover: price };
 }
 /** Money formatting. "QAR 45" for whole prices on listings, "QAR 24.60" where dp = 2. */
 function qar(n, dp) {
@@ -651,12 +656,17 @@ const pct = r => Math.round(r * 100) + '%';
 
 /* Item-problem policy (agreed by the group on 17 Nov 2026). Every screen reads its wording from here. */
 const POLICY = Object.freeze({
-  buyer: 'There are no general returns. If an item does not match its listing, you can decline it at handover and get a full refund, including the delivery fee.',
-  seller: 'If a buyer declines your item because it does not match its listing, the buyer’s delivery fee is taken from your next payout, and you receive penalty points and a lower seller rating. Relore reviews each case and asks for your side first. Repeated or deliberate misrepresentation leads to a permanent ban, linked to your Qatar ID.',
-  sellerShort: 'The seller receives penalty points and a lower rating. Repeated or deliberate misrepresentation leads to a permanent ban, linked to their Qatar ID.',
+  buyer: 'There are no general returns. You pay only the delivery fee when you order, and pay for the item at handover, after checking it. If it does not match its listing, you can decline it: you pay nothing for the item and your delivery fee is refunded. If you decline an item that does match its listing, the delivery fee is not refunded.',
+  seller: 'If a buyer declines your item because it does not match its listing, you pay the delivery fee for that trip (even on a free-delivery order), taken from your next payout. You also receive penalty points and a lower rating, and repeated or deliberate misrepresentation leads to a permanent ban linked to your Qatar ID.',
+  sellerDetail: [
+    'Relore reviews each case, using the driver\u2019s photos from collection, and asks for your side first.',
+    'If a charge is more than your next payout, the rest carries over to later sales. You can keep listing while you pay it off, and Relore shows what was deducted and why.',
+    'New listings are paused if your unpaid balance passes a set limit, or if you have several unresolved reports.'
+  ],
+  sellerShort: 'The seller pays the delivery fee from their next payout and receives penalty points and a lower rating. Repeated or deliberate misrepresentation leads to a permanent ban, linked to their Qatar ID.',
   legal: 'This does not affect your legal rights as a consumer in Qatar.',
-  returnCostLabel: 'Who pays the delivery fee when an item is declined',
-  returnCost: 'The seller, from their next payout. If they have no payouts left, Relore covers it.'
+  returnCostLabel: 'Who pays when an item is declined',
+  returnCost: 'The seller. Relore refunds your delivery fee straight away and recovers it from the seller\u2019s next sale.'
 });
 
 const BRAND = Object.freeze({
@@ -737,7 +747,7 @@ const SHOTS = [['front', 'Front'], ['back', 'Back'], ['label', 'Label'], ['defec
 const state = {
   listings: LISTINGS.map(l => ({ ...l })),
   filters: { q: '', cat: 'all', size: 'all' },
-  checkout: { addr: 'ec', feePay: 'card', itemPay: 'card' },
+  checkout: { addr: 'ec', feePay: 'card', itemPay: 'cash' },
   chats: {},
   orders: [
     { id: 'RL-1038', title: 'Orange knit jumper', brand: 'Mango', size: 'M', art: 'jumper', pal: 'rose', bg: 'deep', photo: 'orange-jumper', area: 'Al Sadd',
@@ -1097,7 +1107,7 @@ screens.item = id => {
 
         <h3 class="section-title">Delivery</h3>
         <div class="panel">
-          <div class="mini">${ic('truck')}<div class="t"><b>A Relore driver collects and delivers</b><span>To ${esc(a.label)}, ${esc(a.area)}: about ${km} km, <span class="num">${qar(deliveryFee(km), 2)}</span></span></div></div>
+          <div class="mini">${ic('truck')}<div class="t"><b>A Relore driver collects and delivers</b><span>To ${esc(a.label)}, ${esc(a.area)}: about ${km} km, ${isFreeDelivery(it.price) ? '<b>free delivery</b> (orders of ' + qar(FEES.freeDeliveryFrom) + ' or more from one seller)' : `<span class="num">${qar(deliveryFee(km), 2)}</span>`}</span></div></div>
         </div>
         <div style="margin-top:12px">${policyBlock()}</div>
       </div>
@@ -1152,8 +1162,13 @@ const FEE_PAY = {
   applepay: { name: 'Apple Pay', inline: 'Apple Pay' },
   fawran: { name: 'Fawran', inline: 'Fawran', note: 'Instant transfer from your bank' }
 };
+const ITEM_PAY = {
+  card: { name: 'Card', inline: 'card', note: 'On the driver\u2019s card machine' },
+  cash: { name: 'Cash', inline: 'cash', note: 'Paid to the driver' },
+  fawran: { name: 'Fawran', inline: 'Fawran', note: 'Instant transfer at the door' }
+};
 function checkoutBody(it) {
-  const c = state.checkout, km = roadKm(it.area, c.addr), a = addr(c.addr), t = orderTotals(it.price, km, c.itemPay);
+  const c = state.checkout, km = roadKm(it.area, c.addr), a = addr(c.addr), t = orderTotals(it.price, km);
   return `
     <div class="panel mini">
       <div class="thumb">${tile(it)}</div>
@@ -1171,32 +1186,33 @@ function checkoutBody(it) {
       <div class="route">${ic('pin', 'sm')}<b>${esc(it.area)}</b><span class="dash"></span>${ic('pin', 'sm')}<b>${esc(a.area)}</b></div>
       <p class="km num" id="feeKm">${km} km by road, from the seller\u2019s address to yours</p>
       <div class="sum">
-        <span class="formula num" id="feeFormula">${qar(FEES.deliveryBase)} + ${km} km × ${qar(FEES.deliveryPerKm, 2)}</span>
-        <span class="result num" id="feeResult">${qar(t.delivery, 2)}</span>
+        <span class="formula num" id="feeFormula">${t.freeDelivery ? '<s>' : ''}${qar(FEES.deliveryBase)} + ${km} km × ${qar(FEES.deliveryPerKm, 2)}${t.freeDelivery ? ' = ' + qar(t.fullDelivery, 2) + '</s>' : ''}</span>
+        <span class="result num" id="feeResult">${t.freeDelivery ? 'Free' : qar(t.delivery, 2)}</span>
       </div>
+      <p class="small ${t.freeDelivery ? '' : 'muted'}" id="freeNote" style="margin-top:8px">${t.freeDelivery ? '<b>Free delivery:</b> this order is ' + qar(FEES.freeDeliveryFrom) + ' or more from one seller, so Relore covers the fee.' : 'Free delivery on orders of ' + qar(FEES.freeDeliveryFrom) + ' or more from one seller.'}</p>
     </div>
     <p class="small muted" style="margin-top:8px">A Relore driver collects the item from the seller and brings it to you. The distance shown is a sample figure for this prototype.</p>
 
-    <h2 class="section-title">Pay the delivery fee now</h2>
-    <p class="small muted" style="margin:-4px 0 10px">Relore sends a driver to the seller only once the delivery fee is paid, even if you pay for the item in cash.</p>
+    ${t.freeDelivery ? '' : `<h2 class="section-title">Pay the delivery fee now</h2>
+    <p class="small muted" style="margin:-4px 0 10px">Relore sends a driver to the seller only once the delivery fee is paid.</p>
     <div class="choice" role="radiogroup" aria-label="Delivery fee payment method">
       ${Object.entries(FEE_PAY).map(([k, v]) => `<label><input type="radio" name="feePay" value="${k}" ${c.feePay === k ? 'checked' : ''}><span class="dot"></span><span><span class="t">${v.name}</span>${v.note ? `<span class="d">${v.note}</span>` : ''}</span></label>`).join('')}
-    </div>
+    </div>`}
 
-    <h2 class="section-title">Pay for the item</h2>
-    <div class="choice inline" role="radiogroup" aria-label="Item payment method">
-      <label><input type="radio" name="itemPay" value="card" ${c.itemPay === 'card' ? 'checked' : ''}><span class="dot"></span><span class="t">Card</span></label>
-      <label><input type="radio" name="itemPay" value="cod" ${c.itemPay === 'cod' ? 'checked' : ''}><span class="dot"></span><span class="t">Cash on delivery</span></label>
+    <h2 class="section-title">Pay for the item at handover</h2>
+    <p class="small muted" style="margin:-4px 0 10px">Check the item when the driver arrives, then pay. If it does not match its listing, you can decline it and pay nothing for it.</p>
+    <div class="choice" role="radiogroup" aria-label="Item payment method at handover">
+      ${Object.entries(ITEM_PAY).map(([k, v]) => `<label><input type="radio" name="itemPay" value="${k}" ${c.itemPay === k ? 'checked' : ''}><span class="dot"></span><span><span class="t">${v.name}</span><span class="d">${v.note}</span></span></label>`).join('')}
     </div>
 
     <h2 class="section-title">Summary</h2>
     <div class="panel" style="padding:6px 16px">
       <dl class="rows">
         <div><dt>Item price</dt><dd class="num">${qar(t.item, 2)}</dd></div>
-        <div><dt>Delivery fee (${km} km)</dt><dd class="num" id="sumDelivery">${qar(t.delivery, 2)}</dd></div>
+        <div><dt>Delivery fee (${km} km)</dt><dd class="num" id="sumDelivery">${t.freeDelivery ? 'Free' : qar(t.delivery, 2)}</dd></div>
         <div class="total"><dt>Total</dt><dd class="num" id="sumTotal">${qar(t.total, 2)}</dd></div>
-        <div><dt>Pay now by ${FEE_PAY[c.feePay].inline}${c.itemPay === 'card' && c.feePay !== 'card' ? ' and card' : ''}</dt><dd class="num" id="sumNow">${qar(t.payNow, 2)}</dd></div>
-        ${t.payOnDelivery ? `<div><dt>Pay in cash on delivery</dt><dd class="num" id="sumCod">${qar(t.payOnDelivery, 2)}</dd></div>` : ''}
+        <div><dt>${t.freeDelivery ? 'Pay now' : 'Pay now by ' + FEE_PAY[c.feePay].inline}</dt><dd class="num" id="sumNow">${qar(t.payNow, 2)}</dd></div>
+        <div><dt>Pay at handover by ${ITEM_PAY[c.itemPay].inline}</dt><dd class="num" id="sumHandover">${qar(t.payAtHandover, 2)}</dd></div>
       </dl>
     </div>
 
@@ -1206,13 +1222,13 @@ function checkoutBody(it) {
 screens.checkout = id => {
   const it = byId(id) || firstAvailable();
   if (it.sold) return screens.item(it.id);
-  const t = orderTotals(it.price, roadKm(it.area, state.checkout.addr), state.checkout.itemPay);
+  const t = orderTotals(it.price, roadKm(it.area, state.checkout.addr));
   return {
     tabs: false, tone: 'sand',
     html: topbar('Checkout', 'item/' + it.id) + `
     <div class="scroll"><form class="pad" id="checkoutForm" data-id="${it.id}">${checkoutBody(it)}</form></div>
     <div class="actionbar" style="flex-direction:column;gap:6px">
-      <button class="btn btn-primary block" type="button" data-act="place-order" data-id="${it.id}"><span>Place order · pay <span class="num" id="cta">${qar(t.payNow, 2)}</span> now</span></button>
+      <button class="btn btn-primary block" type="button" data-act="place-order" data-id="${it.id}"><span>${t.freeDelivery ? 'Place order · <span id="cta">nothing to pay now</span>' : `Place order · pay <span class="num" id="cta">${qar(t.payNow, 2)}</span> now`}</span></button>
       <p class="demo-tag" style="margin:0">Prototype only: no payment is taken.</p>
     </div>`
   };
@@ -1221,9 +1237,9 @@ screens.checkout = id => {
 /* 6. Orders and order tracking --------------------------------------- */
 const STEPS = [
   ['Order placed', 'Relore has confirmed your order with the seller.'],
-  ['Collected from seller', 'A Relore driver has collected the item.'],
+  ['Collected from seller', 'A Relore driver has collected the item and photographed it as a record of its condition.'],
   ['Out for delivery', 'Your Relore driver is on the way to you.'],
-  ['Delivered', 'Check the item at handover before you accept it.']
+  ['Delivered', 'Check the item, then pay for it. You can decline it if it does not match its listing.']
 ];
 const orderThumb = o => `<div class="thumb"><div class="tile ${o.bg}">${media(o)}</div></div>`;
 
@@ -1235,7 +1251,7 @@ screens.orders = () => ({
     ${state.orders.map(o => `
       <button class="panel listing" type="button" data-go="track/${o.id}" style="width:100%;border:0;text-align:left;margin-top:12px">
         ${orderThumb(o)}
-        <span class="t"><b>${esc(o.title)}</b><span class="muted">Order ${o.id} · <span class="num">${qar(orderTotals(o.price, o.km, o.itemPay).total, 2)}</span></span><br>
+        <span class="t"><b>${esc(o.title)}</b><span class="muted">Order ${o.id} · <span class="num">${qar(orderTotals(o.price, o.km).total, 2)}</span></span><br>
           <span class="pill ${o.step === 3 ? 'live' : 'wait'}">${STEPS[o.step][0]}</span></span>
         ${ic('next')}
       </button>`).join('')}
@@ -1245,7 +1261,7 @@ screens.orders = () => ({
 
 screens.track = id => {
   const o = state.orders.find(x => x.id === id) || state.orders[0];
-  const t = orderTotals(o.price, o.km, o.itemPay), a = addr(o.addr);
+  const t = orderTotals(o.price, o.km), a = addr(o.addr);
   return {
     tabs: true, tone: 'sand',
     html: topbar('Order ' + o.id, 'orders') + `
@@ -1271,8 +1287,8 @@ screens.track = id => {
         <dl class="rows">
           <div><dt>From</dt><dd>Seller in ${esc(o.area)}</dd></div>
           <div><dt>To</dt><dd>${esc(a.label)}, ${esc(a.area)}</dd></div>
-          <div><dt>Delivery fee (${o.km} km)</dt><dd class="num">${qar(t.delivery, 2)} paid</dd></div>
-          <div><dt>Item</dt><dd class="num">${o.itemPay === 'cod' ? qar(o.price, 2) + (o.step === 3 ? ' paid in cash' : ' cash on delivery') : qar(o.price, 2) + ' paid by card'}</dd></div>
+          <div><dt>Delivery fee (${o.km} km)</dt><dd class="num">${t.freeDelivery ? 'Free' : qar(t.delivery, 2) + ' paid'}</dd></div>
+          <div><dt>Item</dt><dd class="num">${qar(o.price, 2)} ${o.step === 3 ? 'paid' : 'to pay'} at handover by ${(ITEM_PAY[o.itemPay] || ITEM_PAY.card).inline}</dd></div>
         </dl>
       </div>
 
@@ -1448,7 +1464,8 @@ screens.sell = () => {
         </div>`).join('')}
 
       <h2 class="section-title">Seller standing</h2>
-      <div class="panel"><div class="mini" style="align-items:flex-start">${ic('shield')}<div class="t"><b>0 penalty points</b><span>${esc(POLICY.seller)}</span></div></div></div>
+      <div class="panel"><div class="mini" style="align-items:flex-start">${ic('shield')}<div class="t"><b>0 penalty points · <span class="num">${qar(0, 2)}</span> owed</b><span>${esc(POLICY.seller)}</span></div></div>
+        <ul class="standing">${POLICY.sellerDetail.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
     </div></div>`
   };
 };
@@ -1457,13 +1474,13 @@ screens.sell = () => {
 const FAQS = () => [
   ['What fees does Relore charge?', [
     `Sellers: Relore deducts a ${pct(FEES.commissionRate)} commission from the sale price, so you receive ${pct(1 - FEES.commissionRate)}. For example, an item sold for ${qar(150)} pays you ${qar(sellerPayout(150))}.`,
-    `Buyers: the delivery fee is ${qar(FEES.deliveryBase)} plus ${qar(FEES.deliveryPerKm, 2)} per km of road distance from the seller’s address to yours. For example, 12 km costs ${qar(deliveryFee(12), 2)}.`]],
+    `Buyers: the delivery fee is ${qar(FEES.deliveryBase)} plus ${qar(FEES.deliveryPerKm, 2)} per km of road distance from the seller’s address to yours. For example, 12 km costs ${qar(deliveryFee(12), 2)}. Delivery is free on orders of ${qar(FEES.freeDeliveryFrom)} or more from one seller.`]],
   ['How are listings reviewed?', [
     'The Relore team reviews every listing by hand before it goes live.',
     'Each listing needs at least 4 photos (front, back, clothing label and any visible defects), plus the size, measurements, brand and a condition rating.']],
   ['How does delivery work?', [
     'The seller keeps the item until it sells. Once you order, a Relore driver collects it from the seller and delivers it to you.',
-    'You pay the delivery fee upfront at checkout by card, Apple Pay or Fawran. Relore sends a driver only once it is paid. You can pay for the item itself by card or cash on delivery.']],
+    'You pay the delivery fee when you order, by card, Apple Pay or Fawran, and Relore sends a driver only once it is paid. You pay for the item at handover, after checking it, by card, cash or Fawran.']],
   ['What if the item is not as described?', [
     POLICY.buyer + ' ' + POLICY.sellerShort,
     `${POLICY.returnCostLabel}: ${POLICY.returnCost}`,
@@ -1626,7 +1643,7 @@ const actions = {
     const o = { id: 'RL-' + (++state.orderSeq), title: it.title, brand: it.brand, size: it.size, art: it.art, pal: it.pal, bg: it.bg, photo: it.photo, area: it.area,
       addr: c.addr, km: roadKm(it.area, c.addr), price: it.price, itemPay: c.itemPay, feePay: c.feePay, step: 0, times: [timeNow()], issue: false };
     state.orders.unshift(o); it.sold = true;
-    go('track/' + o.id); toast('Order placed. Delivery fee paid.');
+    go('track/' + o.id); toast(isFreeDelivery(it.price) ? 'Order placed. Delivery is free.' : 'Order placed. Delivery fee paid.');
   },
   'issue-photo': el => {
     const o = state.orders.find(x => x.id === el.dataset.id);
@@ -1766,12 +1783,13 @@ $('#facts').innerHTML = `
   <div><dt>Commission</dt><dd>${pct(FEES.commissionRate)} of the sale price</dd></div>
   <div><dt>Seller receives</dt><dd>${pct(1 - FEES.commissionRate)}</dd></div>
   <div><dt>Delivery fee</dt><dd>${qar(FEES.deliveryBase)} + ${qar(FEES.deliveryPerKm, 2)} per km</dd></div>
+  <div><dt>Free delivery</dt><dd>Orders of ${qar(FEES.freeDeliveryFrom)}+ from one seller</dd></div>
   <div><dt>Example: 12 km</dt><dd>${qar(deliveryFee(12), 2)} delivery</dd></div>
   <div><dt>Example: ${qar(150)} sale</dt><dd>Seller receives ${qar(sellerPayout(150))}</dd></div>
-  <div class="stack"><dt>Declined item: delivery fee paid by</dt><dd>The seller, from their next payout</dd></div>`;
+  <div class="stack"><dt>Declined item: delivery fee paid by</dt><dd>The seller, from their next sale</dd></div>`;
 
 /* Exposed for the automated checks in part4-output/tools. */
-window.Relore = { FEES, deliveryFee, commission, sellerPayout, orderTotals, qar, state, go, POLICY };
+window.Relore = { FEES, deliveryFee, commission, sellerPayout, orderTotals, isFreeDelivery, qar, state, go, POLICY };
 
 fit();
 render(false);
